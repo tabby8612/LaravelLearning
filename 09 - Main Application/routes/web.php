@@ -1,12 +1,14 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
+use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
+Route::get('/', [HomeController::class, "index"])->name('home');
+
+Route::get('posts/all', [HomeController::class, "index"])->name('posts');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
