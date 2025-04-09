@@ -10,13 +10,22 @@ Route::get('/', [HomeController::class, "index"])->name('home');
 
 Route::get('posts/all', [HomeController::class, "index"])->name('posts');
 
+Route::get("contact", [HomeController::class, "contact"]);
+
+Route::get("about", [HomeController::class, "about"]);
+
+Route::get("post/{id}", [HomeController::class, "post"]);
+
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    // Route::get('dashboard', function () {
+    //     return Inertia::render('admin/dashboard');
+    // })->name('dashboard');
+    Route::get('dashboard', [PostController::class, "index"])->name('dashboard');
+
+    
+    Route::resource("admin", PostController::class);
 });
 
-Route::resource("admin", PostController::class);
 
 // Route::get("admin", function() {
 //     return Inertia::render("admin/dashboard");

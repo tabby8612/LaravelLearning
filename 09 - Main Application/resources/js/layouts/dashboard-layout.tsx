@@ -7,10 +7,11 @@ import { ReactNode } from 'react';
 type Props = {
     title: string;
     identifier: string;
+    user: string;
     children: ReactNode;
 };
 
-export default function DashboardLayout({ title, identifier, children }: Props) {
+export default function DashboardLayout({ title, identifier, user, children }: Props) {
     return (
         <>
             <Head title={title} />
@@ -121,7 +122,7 @@ export default function DashboardLayout({ title, identifier, children }: Props) 
                                 <BellIcon />
                                 <div className="border-l-3 border-gray-400"></div>
                                 <User className="text-gray-900" />
-                                <h1 className="text-gray-900">Tim Cook</h1>
+                                <h1 className="text-gray-900">{user}</h1>
                                 <ChevronDown className="mr-6" />
                             </div>
                         </nav>

@@ -1,6 +1,7 @@
 import { UserIcon } from 'lucide-react';
 
 type Props = {
+    id: string;
     title: string;
     description: string;
     user: string;
@@ -8,8 +9,7 @@ type Props = {
     image: string;
 };
 
-export function Card({ image, date, title, description, user }: Props) {
-    console.log(date);
+export function Card({ id, image, date, title, description, user }: Props) {
     return (
         <div id="card" className="my-5 flex">
             <div className="mr-3 h-70 w-50 rounded-3xl">
@@ -20,7 +20,9 @@ export function Card({ image, date, title, description, user }: Props) {
                     <p className="px-3.5 py-2.5 text-[13px] text-gray-500">{date}</p>
                     <p className="rounded-xl bg-gray-200 px-2 py-2 text-[13px] text-gray-500">Self Development</p>
                 </div>
-                <h1 className="font-poppins px-3.5 py-2.5 text-2xl font-bold">{title}</h1>
+                <a href={`/post/${id}`} className="bg-amber-400">
+                    <h1 className="font-poppins text-primary-dark px-3.5 py-2.5 text-2xl font-bold hover:text-blue-800">{title}</h1>
+                </a>
                 <p className="border-gray-400 px-3.5 py-2.5 after:mx-auto after:my-6 after:block after:w-[70%] after:rounded-xl after:border-1 after:border-gray-200">
                     {description}
                 </p>

@@ -12,26 +12,29 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // dd($request->user()->name);
         //
         $posts = Post::all()->count();
         $users = User::all()->count();
 
         return Inertia::render("admin/dashboard", [
             "postsCount" => $posts,
-            "usersCount" => $users
+            "usersCount" => $users,
+            "username" => $request->user()->name
         ]);
         
     }
 
-    public function posts()
+    public function posts(Request $request)
     {
+
         
         //
         $data = [];
 
-        $posts = Post::all();
+        $posts = Post::get()->where("user_id", $request->user()->id);
         
         foreach($posts as $post) {
             $dataObj = [

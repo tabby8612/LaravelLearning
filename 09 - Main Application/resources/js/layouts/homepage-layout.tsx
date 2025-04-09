@@ -17,7 +17,7 @@ export default function HomepageLayout({ page = 'homepage', children }: Props) {
                 <Hero />
             </div>
             <div className="flex justify-around">
-                <div className="ml-9 h-full w-[80%]">{children}</div>
+                <div className="h-full w-[80%]">{children}</div>
                 <Sidebar />
             </div>
         </>

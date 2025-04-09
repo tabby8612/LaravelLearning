@@ -4,11 +4,12 @@ import DashboardLayout from '@/layouts/dashboard-layout';
 type Props = {
     postsCount: number;
     usersCount: number;
+    username: string;
 };
 
-export default function Dashboard({ postsCount, usersCount }: Props) {
+export default function Dashboard({ postsCount, usersCount, username }: Props) {
     return (
-        <DashboardLayout title="Dashboard" identifier="dashboard">
+        <DashboardLayout title="Dashboard" identifier="dashboard" user={username}>
             <div className="mx-12 my-12 h-[500px] w-3xl p-5">
                 <h1 className="text-primary-text font-poppins mb-3.5 text-5xl font-medium">Dashboard</h1>
 
