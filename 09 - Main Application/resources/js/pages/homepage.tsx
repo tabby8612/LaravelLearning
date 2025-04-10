@@ -15,6 +15,7 @@ type DataType = {
 type Props = {
     data: DataType[];
     totalPages: number;
+    isLoggedIn: boolean;
 };
 
 //-- To pass data from Parent to Grandchild (Homepage to HomeLayout to Sidebar)
@@ -24,7 +25,7 @@ type Props = {
 //-- pass value to consume it with useContext.
 export const PostContext = createContext<DataType[]>([]);
 
-export default function Homepage({ data, totalPages }: Props) {
+export default function Homepage({ data, totalPages, isLoggedIn }: Props) {
     const numbers: number[] = [];
 
     for (let i = 0; i < totalPages; i++) {
@@ -33,7 +34,7 @@ export default function Homepage({ data, totalPages }: Props) {
 
     return (
         <PostContext.Provider value={data}>
-            <HomepageLayout page="Homepage">
+            <HomepageLayout page="Homepage" isLoggedIn={isLoggedIn}>
                 <div id="content" className="ml-10">
                     {data.map((el) => (
                         <PostCard

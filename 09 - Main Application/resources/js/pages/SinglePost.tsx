@@ -13,14 +13,15 @@ type DataType = {
 type Props = {
     post: DataType;
     data: DataType[];
+    isLoggedIn: boolean;
 };
 
 export const SinglePostContext = createContext<DataType[]>([]);
 
-export default function SinglePost({ post, data }: Props) {
+export default function SinglePost({ post, data, isLoggedIn }: Props) {
     return (
         <SinglePostContext.Provider value={data}>
-            <HomepageLayout page={post.title}>
+            <HomepageLayout page={post.title} isLoggedIn={isLoggedIn}>
                 <div id="content" className="mx-auto my-7 w-4xl pl-4">
                     <h1 className="text-primary-dark py-5 text-3xl font-bold">{post.title}</h1>
                     <div className="flex gap-5">

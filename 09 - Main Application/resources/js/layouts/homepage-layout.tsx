@@ -6,14 +6,17 @@ import { ReactNode } from 'react';
 type Props = {
     page: string;
     children: ReactNode;
+    isLoggedIn: boolean;
 };
 
-export default function HomepageLayout({ page = 'homepage', children }: Props) {
+export default function HomepageLayout({ page = 'homepage', isLoggedIn, children }: Props) {
+    console.log(`From Homepage Layout`);
+    console.log(isLoggedIn);
     return (
         <>
             <div id="header">
                 <title>{page}</title>
-                <NavBar page={page} />
+                <NavBar page={page} isLoggedIn={isLoggedIn} />
                 <Hero />
             </div>
             <div className="flex justify-around">

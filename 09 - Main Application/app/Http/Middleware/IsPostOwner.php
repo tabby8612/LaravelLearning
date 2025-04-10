@@ -23,7 +23,7 @@ class IsPostOwner
         
 
         if ($post->user_id != $request->user()->id) {
-            return redirect("/");
+            return redirect()->route("admin.index");
         } else {
             return $next($request);
         }

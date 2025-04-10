@@ -1,8 +1,8 @@
 import SidebarTab from '@/components/admin/SidebarTab';
 import { BookmarkIcon, Cog6ToothIcon, GlobeAltIcon, PencilSquareIcon, UserIcon } from '@heroicons/react/24/solid';
-import { Head } from '@inertiajs/react';
-import { BellIcon, ChevronDown, SearchIcon, TagsIcon, User } from 'lucide-react';
-import { ReactNode } from 'react';
+import { Head, router } from '@inertiajs/react';
+import { BellIcon, ChevronDown, ChevronUp, SearchIcon, TagsIcon, User } from 'lucide-react';
+import { ReactNode, useState } from 'react';
 
 type Props = {
     title: string;
@@ -12,6 +12,25 @@ type Props = {
 };
 
 export default function DashboardLayout({ title, identifier, user, children }: Props) {
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+
+    function clickHandler(e: React.MouseEvent<HTMLAnchorElement>) {
+        e.preventDefault();
+        const target = e.target as HTMLAnchorElement;
+        const params = target.href.split('/');
+
+        if (params.includes('logout')) {
+            router.post('/logout', { message: 'You Are Logged Out' });
+        } else {
+            console.log(`This is edit`);
+        }
+    }
+
+    function menuToggler(e: React.MouseEvent<HTMLHeadingElement>) {
+        e.preventDefault();
+        setIsOpen((isOpen) => !isOpen);
+    }
+
     return (
         <>
             <Head title={title} />
@@ -107,13 +126,14 @@ export default function DashboardLayout({ title, identifier, user, children }: P
                                 },
                                 {
                                     name: 'Logout',
-                                    param: '/user/logout',
+                                    param: '/logout',
                                 },
                             ]}
+                            clickFn={clickHandler}
                         />
                     </div>
                     <div className="flex w-[85%] flex-col">
-                        <nav className="flex flex-row justify-between bg-white p-4 text-gray-400 shadow-xl">
+                        <nav className="relative flex flex-row justify-between bg-white p-4 text-gray-400 shadow-xl">
                             <div className="flex gap-2">
                                 <SearchIcon />
                                 <input type="text" name="search" className="font-poppins mr-7 w-2xs focus:outline-0" />
@@ -122,8 +142,22 @@ export default function DashboardLayout({ title, identifier, user, children }: P
                                 <BellIcon />
                                 <div className="border-l-3 border-gray-400"></div>
                                 <User className="text-gray-900" />
-                                <h1 className="text-gray-900">{user}</h1>
-                                <ChevronDown className="mr-6" />
+                                <div className="">
+                                    <h1 className="cursor-pointer text-gray-900" onClick={menuToggler}>
+                                        {user}{' '}
+                                        {isOpen ? <ChevronUp className="mr-6 inline rotate-6 transition" /> : <ChevronDown className="mr-6 inline" />}
+                                    </h1>
+                                    {isOpen && (
+                                        <div className="text-2xs animate-fade-in-scale absolute top-13 right-5 rounded-xl bg-white px-8 py-2 text-black shadow-2xs shadow-black">
+                                            <a href="/settings" className="mb-6 block">
+                                                Settings
+                                            </a>
+                                            <a href="/logout" className="mb-6 block">
+                                                Logout
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </nav>
                         {children}

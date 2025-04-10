@@ -10,9 +10,10 @@ type Props = {
         name: string;
         param: string;
     }[];
+    clickFn?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 };
 
-export default function SidebarTab({ tabName, curTab, Icon, items }: Props) {
+export default function SidebarTab({ tabName, curTab, Icon, items, clickFn }: Props) {
     const [isActive, setIsActive] = useState(false);
 
     const currentParam = window.location.pathname;
@@ -37,8 +38,8 @@ export default function SidebarTab({ tabName, curTab, Icon, items }: Props) {
                 <div className="font-poppins animate-fade-in-scale flex flex-col gap-2 bg-blue-950 py-5 pl-10 text-sm text-white inset-shadow-sm inset-shadow-black">
                     <ul className="">
                         {items.map((item) => (
-                            <li className="hover:text-primary-text m-1 cursor-pointer">
-                                <a className={currentParam === item.param ? 'text-primary-text' : ''} href={`${item.param}`}>
+                            <li className="hover:text-primary-text m-1 cursor-pointer" key={item.name}>
+                                <a className={currentParam === item.param ? 'text-primary-text' : ''} href={`${item.param}`} onClick={clickFn}>
                                     {item.name}
                                 </a>
                             </li>

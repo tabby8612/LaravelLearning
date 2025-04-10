@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Carbon\Traits\Timestamp;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class HomeController extends Controller {
@@ -32,17 +33,25 @@ class HomeController extends Controller {
 
         return $data;
     }
+
+
+    private function isLoggedIn() {
+        
+        return !empty(Auth::user());
+    } 
     
     public function index() {
 
         
-        //
+        
+
         //-- pagination can be done using paginate function 
         //-- we need to use DB class then table and paginate function
         //-- We need to pass no. of post we wamt per page
         //-- Laravel by default execute result by using 'page' parameter
         $paginatorPosts = DB::table("posts")->paginate(5);
         $data = [];
+
 
         //-- now we interate to get posts into data
         foreach($paginatorPosts as $post) {
@@ -65,9 +74,12 @@ class HomeController extends Controller {
         //-- paginator object have many methods like total(), perPage(), count() etc.
         $pages = ceil($paginatorPosts->total() / $paginatorPosts->perPage());
 
+        
+
         return Inertia::render('homepage', [
             "data" => $data,
-            "totalPages" => $pages
+            "totalPages" => $pages,
+            "isLoggedIn" => $this->isLoggedIn()
             
         ]); 
     }
@@ -78,7 +90,8 @@ class HomeController extends Controller {
                
 
         return Inertia::render("contact", [
-            "data" => $data
+            "data" => $data,
+            "isLoggedIn" => $this->isLoggedIn()
         ]);
     }
 
@@ -101,7 +114,8 @@ class HomeController extends Controller {
 
         return Inertia::render("SinglePost", [
             "post" => $postContent,
-            "data" => $data
+            "data" => $data,
+            "isLoggedIn" => $this->isLoggedIn()
         ]);
     }
 

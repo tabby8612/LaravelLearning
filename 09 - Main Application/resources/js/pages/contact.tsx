@@ -17,14 +17,17 @@ type DataType = {
 type Props = {
     data: DataType[];
     totalPages: number;
+    isLoggedIn: boolean;
 };
 
 export const PostContext = createContext<DataType[]>([]);
 
-export default function Contact({ data }: Props) {
+export default function Contact({ data, isLoggedIn }: Props) {
+    console.log('from contact');
+    console.log(isLoggedIn);
     return (
         <PostContext.Provider value={data}>
-            <HomepageLayout page="Contact">
+            <HomepageLayout page="Contact" isLoggedIn={isLoggedIn}>
                 <div id="contactform" className="from-primary-dark to-primary-light h-[800px] bg-gradient-to-r from-40% pt-5">
                     <form action="" className="ml-5">
                         <Label labelName="Name" />

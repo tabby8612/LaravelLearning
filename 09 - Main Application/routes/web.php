@@ -17,13 +17,16 @@ Route::get("about", [HomeController::class, "about"]);
 Route::get("post/{id}", [HomeController::class, "post"]);
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Route::get('dashboard', function () {
-    //     return Inertia::render('admin/dashboard');
-    // })->name('dashboard');
+    
     Route::get('dashboard', [PostController::class, "index"])->name('dashboard');
-
     
     Route::resource("admin", PostController::class);
+});
+
+
+Route::middleware(["IsPostOwner"])->group(function() {
+    Route::get("admin/{admin}/edit", [PostController::class, "edit"]);
+    Route::delete("admin/{admin}", [PostController::class, "destroy"]);
 });
 
 
