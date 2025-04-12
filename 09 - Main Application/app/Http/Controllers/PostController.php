@@ -48,7 +48,7 @@ class PostController extends Controller
             $data[] = $dataObj;
         }        
 
-        return Inertia::render("admin/posts", [
+        return Inertia::render("admin/posts/posts", [
             "data" => $data,
             "token" => csrf_token(),
         ]);
@@ -61,7 +61,7 @@ class PostController extends Controller
     {
         //
         $token = csrf_token();
-        return Inertia::render("admin/create", ["token" => $token]);
+        return Inertia::render("admin/posts/create", ["token" => $token]);
         
         
     }

@@ -7,11 +7,13 @@ import { ReactNode, useState } from 'react';
 type Props = {
     title: string;
     identifier: string;
-    user: string;
+    user?: string;
     children: ReactNode;
 };
 
 export default function DashboardLayout({ title, identifier, user, children }: Props) {
+    console.log(identifier);
+
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     function clickHandler(e: React.MouseEvent<HTMLAnchorElement>) {
@@ -58,11 +60,11 @@ export default function DashboardLayout({ title, identifier, user, children }: P
                             items={[
                                 {
                                     name: 'All Users',
-                                    param: '/users',
+                                    param: route('user.index'),
                                 },
                                 {
                                     name: 'Create New User',
-                                    param: '/user/create',
+                                    param: route('user.create'),
                                 },
                             ]}
                         />
@@ -74,11 +76,11 @@ export default function DashboardLayout({ title, identifier, user, children }: P
                             items={[
                                 {
                                     name: 'All Posts',
-                                    param: '/admin/posts/all',
+                                    param: route('admin.posts'),
                                 },
                                 {
                                     name: 'Create New Post',
-                                    param: '/admin/create',
+                                    param: route('admin.create'),
                                 },
                             ]}
                         />
@@ -90,11 +92,11 @@ export default function DashboardLayout({ title, identifier, user, children }: P
                             items={[
                                 {
                                     name: 'All Tags',
-                                    param: '/tags',
+                                    param: route('tags.index'),
                                 },
                                 {
                                     name: 'Create New Tag',
-                                    param: '/tag/create',
+                                    param: route('tags.create'),
                                 },
                             ]}
                         />
