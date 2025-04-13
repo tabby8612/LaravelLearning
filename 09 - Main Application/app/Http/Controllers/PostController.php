@@ -128,7 +128,7 @@ class PostController extends Controller
             "token" => csrf_token()
         ];
 
-        return Inertia::render("admin/edit", [
+        return Inertia::render("admin/posts/edit", [
             "data" => $data
         ]);
     }

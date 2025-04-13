@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Session;
 
 class UserController extends Controller
 {
@@ -15,6 +16,12 @@ class UserController extends Controller
     public function index()
     {
         //
+        $message = "";
+        if (Session::has("message")) {
+            $message = Session::get("message");            
+            
+        }
+
         $users = User::all();
 
         $usersData = [];
@@ -36,7 +43,8 @@ class UserController extends Controller
 
         return Inertia::render("admin/users/users", [
             "usersData" => $usersData,
-            "activeUser" => $authUser
+            "activeUser" => $authUser,
+            "message" => $message
         ]);
     }
 
@@ -72,7 +80,7 @@ class UserController extends Controller
             "password" => $request->password,
         ]);
 
-        return redirect(route("user.index"));
+        return redirect(route("user.index"))->with("message", "User Created Successfully");
 
 
     }
@@ -109,7 +117,28 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        //       
+
+        echo($request->name);        
+        echo($request->email);        
+        echo($request->password);
+
+        $request->validate([
+            "name" => ["required", "min:6"],
+            "email" => ["required", "email:rfc,dns"],
+            "password" => ["required", "min:6", "confirmed"]
+        ]);
+
+        $user = User::findOrFail($user->id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = $request->password;
+        $user->save();
+
+        
+
+        return redirect(route("user.index"))->with("message", "User updated successfully");
+
     }
 
     /**
@@ -118,6 +147,11 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         //
-        dd($user);
+        
+        $user->delete();
+
+        return redirect(route("user.index"))->with("message", "User Deleted successfully");
+        
+
     }
 }

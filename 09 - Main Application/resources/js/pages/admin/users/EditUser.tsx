@@ -37,7 +37,8 @@ export default function EditUser({ userData }: Props) {
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        router.patch(route('user.update'), values);
+        console.log(`In handle Submit`);
+        router.patch(route('user.update', userData.id), values);
     }
 
     return (

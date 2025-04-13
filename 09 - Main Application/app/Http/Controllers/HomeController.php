@@ -57,6 +57,7 @@ class HomeController extends Controller {
         foreach($paginatorPosts as $post) {
             
             $date = Carbon::create($post->updated_at);
+            
             $user = Post::findOrFail($post->id)->user->name;
             
             $postObj = [

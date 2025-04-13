@@ -5,15 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Session;
 
 class TagController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+
     public function index()
     {
-        //
+        //       
+
         $tags = Tag::all();
 
         $tagsData = [];
@@ -29,13 +33,13 @@ class TagController extends Controller
             ];
         }
 
-        
-
         $curUser = auth()->user()->name;        
-
+        $message = Session::get("message");
+        
         return Inertia::render("admin/tags/tags", [
             "tagsData" => $tagsData,
-            "curUser" => $curUser
+            "curUser" => $curUser,
+            "message" => $message
         ]);
     }
 
@@ -44,7 +48,8 @@ class TagController extends Controller
      */
     public function create()
     {
-        //
+        
+        return Inertia::render("admin/tags/CreateTag");
     }
 
     /**
@@ -53,6 +58,16 @@ class TagController extends Controller
     public function store(Request $request)
     {
         //
+        
+        $request->validate([
+            "tag" => ["required", "min:2"]
+        ]);
+
+        Tag::create(["tag_name" => $request->tag]);
+
+        return redirect(route("tags.index"))->with("message", "Tag {$request->tag} Added Successfully");
+
+
     }
 
     /**
@@ -69,6 +84,16 @@ class TagController extends Controller
     public function edit(Tag $tag)
     {
         //
+        
+
+        $tagData = [
+            "id" => $tag->id,
+            "tag_name" => $tag->tag_name
+        ];
+
+        return Inertia::render("admin/tags/EditTag", [
+            "tagData" => $tagData
+        ]);
     }
 
     /**
@@ -77,6 +102,16 @@ class TagController extends Controller
     public function update(Request $request, Tag $tag)
     {
         //
+
+        $request->validate([
+            "tagName" => ["required", "min:2"] 
+        ]);
+
+        $tag->tag_name = $request->tagName;
+        $tag->save();
+
+        return redirect(route("tags.index"))->with("message", "Tag Updated Successfully");
+
     }
 
     /**
@@ -84,6 +119,10 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
+        
         //
+        $tag->delete();
+
+        return redirect(route("tags.index"))->with("message", "Tag Deleted Successfully");
     }
 }

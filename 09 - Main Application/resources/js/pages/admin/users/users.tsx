@@ -1,4 +1,6 @@
 import DashboardLayout from '@/layouts/dashboard-layout';
+import { router } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 interface userData {
     user_id: string;
@@ -11,10 +13,23 @@ interface userData {
 type Props = {
     usersData: userData[];
     activeUser: string;
+    message: string;
 };
 
-export default function users({ usersData, activeUser }: Props) {
+export default function Users({ usersData, activeUser, message }: Props) {
+    const [showMessage, setShowMessage] = useState(message);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setShowMessage('');
+        }, 5000);
+    }, [showMessage]);
+
     const linkClasses = 'hover:text-primary-text cursor-pointer text-center hover:underline text-primary-text font-bold';
+
+    function handleDelete(id: string) {
+        router.delete(route('user.destroy', id));
+    }
 
     return (
         <DashboardLayout title="All Users" identifier="users" user={activeUser}>
@@ -30,6 +45,8 @@ export default function users({ usersData, activeUser }: Props) {
                     </a>
                 </div>
             </div>
+
+            {showMessage && <div className="mx-12 text-green-200">{showMessage}</div>}
 
             <div className="mx-12 my-2">
                 <table className="mx-12 my-5 table-cell rounded-2xl border-2 border-gray-50 pt-3.5 pb-3.5 shadow-xl">
@@ -55,7 +72,16 @@ export default function users({ usersData, activeUser }: Props) {
                                 <td className="p-3 text-center">{user.email}</td>
                                 <td className="pr-3 text-center">{user.created_at}</td>
                                 <td className="pr-3 text-center">{user.updated_at}</td>
-                                <td className={`mr-1.5 text-center ${linkClasses}`}>Delete</td>
+                                <td
+                                    className={`mr-1.5 text-center ${linkClasses}`}
+                                    onClick={() => {
+                                        if (confirm('Do you really want to delete')) {
+                                            handleDelete(user.user_id);
+                                        }
+                                    }}
+                                >
+                                    Delete
+                                </td>
                             </tr>
                         ))}
                     </tbody>

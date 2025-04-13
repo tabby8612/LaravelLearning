@@ -1,6 +1,6 @@
 import SidebarTab from '@/components/admin/SidebarTab';
 import { BookmarkIcon, Cog6ToothIcon, GlobeAltIcon, PencilSquareIcon, UserIcon } from '@heroicons/react/24/solid';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { BellIcon, ChevronDown, ChevronUp, SearchIcon, TagsIcon, User } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 
@@ -11,8 +11,19 @@ type Props = {
     children: ReactNode;
 };
 
+type PageProps = {
+    auth: {
+        user: {
+            name: string;
+            id: string;
+        };
+    };
+};
+
 export default function DashboardLayout({ title, identifier, user, children }: Props) {
     console.log(identifier);
+    const { auth } = usePage<PageProps>().props;
+    console.log(auth);
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -24,7 +35,7 @@ export default function DashboardLayout({ title, identifier, user, children }: P
         if (params.includes('logout')) {
             router.post('/logout', { message: 'You Are Logged Out' });
         } else {
-            console.log(`This is edit`);
+            router.get(route('user.edit', auth.user.id));
         }
     }
 
@@ -108,11 +119,11 @@ export default function DashboardLayout({ title, identifier, user, children }: P
                             items={[
                                 {
                                     name: 'All Categories',
-                                    param: '/categories',
+                                    param: route('categories.index'),
                                 },
                                 {
                                     name: 'Create New Post',
-                                    param: '/category/create',
+                                    param: route('categories.create'),
                                 },
                             ]}
                         />
@@ -124,7 +135,7 @@ export default function DashboardLayout({ title, identifier, user, children }: P
                             items={[
                                 {
                                     name: 'Edit User',
-                                    param: '/user/edit',
+                                    param: route('user.edit', auth.user.id),
                                 },
                                 {
                                     name: 'Logout',

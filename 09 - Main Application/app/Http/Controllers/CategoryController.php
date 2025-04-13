@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Session;
 
 class CategoryController extends Controller
 {
@@ -14,7 +15,9 @@ class CategoryController extends Controller
     public function index()
     {
         //
-        echo("hi");
+        
+                
+
         $categories = Category::all();
 
         $categoriesData = [];
@@ -32,10 +35,13 @@ class CategoryController extends Controller
 
         $curUser = auth()->user()->name;
 
+        //-- reading message from session passed as feedback
+        $message = Session::get("message");
         
         
         //-- similar to ["categoriesData" => $categoriesData, "curUser" => $curUser ]
-        return Inertia::render("admin/category/categories", compact("categoriesData", "curUser"));
+        return Inertia::render("admin/category/categories", 
+        compact("categoriesData", "curUser", "message"));
     }
 
     /**
@@ -44,6 +50,8 @@ class CategoryController extends Controller
     public function create()
     {
         //
+
+        return Inertia::render("admin/category/CreateCategory");
     }
 
     /**
@@ -51,7 +59,15 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //        
+
+        $request->validate([
+            "category" => ["required", "min:2"]
+        ]);
+
+        Category::create(["category_name" => $request->category]);
+
+        return redirect(route("categories.index"))->with("message", "Category Added Successfully");
     }
 
     /**
@@ -67,7 +83,16 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        //      
+
+        $categoryData = [
+            "id" => $category->id,
+            "name" => $category->category_name,
+        ];
+
+        return Inertia::render("admin/category/EditCategory", [
+            "categoryData" => $categoryData
+        ]);
     }
 
     /**
@@ -76,6 +101,15 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         //
+        
+        $request->validate([
+            "categoryName" => ["required", "min:2"]
+        ]);
+
+        $category->category_name = $request->categoryName;
+        $category->save();
+
+        return redirect(route("categories.index"))->with("message", "Category Updated Successfully");
     }
 
     /**
@@ -84,5 +118,14 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
+        $category->delete();
+
+        Session::put("message", "Category Deleted");
+
+        return;
+
+
+
+        // return redirect(route("categories.index"))->with("message", "Category Deleted");
     }
 }
