@@ -157,17 +157,22 @@ export default function DashboardLayout({ title, identifier, user, children }: P
                                 <User className="text-gray-900" />
                                 <div className="">
                                     <h1 className="cursor-pointer text-gray-900" onClick={menuToggler}>
-                                        {user}{' '}
-                                        {isOpen ? <ChevronUp className="mr-6 inline rotate-6 transition" /> : <ChevronDown className="mr-6 inline" />}
+                                        {user} {isOpen ? <ChevronUp className="mr-6 inline transition" /> : <ChevronDown className="mr-6 inline" />}
                                     </h1>
                                     {isOpen && (
                                         <div className="text-2xs animate-fade-in-scale absolute top-13 right-5 rounded-xl bg-white px-8 py-2 text-black shadow-2xs shadow-black">
-                                            <a href="/settings" className="mb-6 block">
-                                                Settings
-                                            </a>
-                                            <a href="/logout" className="mb-6 block">
-                                                Logout
-                                            </a>
+                                            <ul>
+                                                <li className="mb-6 block">
+                                                    <a href={route('user.edit', auth.user.id)} onClick={clickHandler}>
+                                                        Settings
+                                                    </a>
+                                                </li>
+                                                <li className="mb-6 block">
+                                                    <a href={route('logout')} onClick={clickHandler}>
+                                                        Logout
+                                                    </a>
+                                                </li>
+                                            </ul>
                                         </div>
                                     )}
                                 </div>

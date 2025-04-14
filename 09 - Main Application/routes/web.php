@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TagController;
@@ -19,12 +20,14 @@ Route::get("about", [HomeController::class, "about"]);
 
 Route::get("post/{id}", [HomeController::class, "post"]);
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    
-    Route::get('dashboard', [PostController::class, "index"])->name('dashboard');
+Route::resource("comment", CommentController::class);
+
+Route::middleware(['auth', 'verified'])->group(function () {    
     
     Route::resource("admin", PostController::class);
 
+    Route::get('admin', [PostController::class, "index"])->name('admin')->can("isAdmin", Post::class);
+    
     Route::resource("user", UserController::class);
 
     Route::resource("tags", TagController::class);
@@ -33,10 +36,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
-Route::middleware(["IsPostOwner"])->group(function() {
-    Route::get("admin/{admin}/edit", [PostController::class, "edit"]);
-    Route::delete("admin/{admin}", [PostController::class, "destroy"]);
-});
+// Route::middleware(["IsPostOwner"])->group(function() {
+//     Route::get("admin/{admin}/edit", [PostController::class, "edit"]);
+//     Route::delete("admin/{admin}", [PostController::class, "destroy"]);
+// });
 
 
 // Route::get("admin", function() {

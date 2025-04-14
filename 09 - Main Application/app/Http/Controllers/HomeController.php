@@ -40,9 +40,7 @@ class HomeController extends Controller {
         return !empty(Auth::user());
     } 
     
-    public function index() {
-
-        
+    public function index() {       
         
 
         //-- pagination can be done using paginate function 
@@ -110,13 +108,25 @@ class HomeController extends Controller {
             "image" => $post->image_path,
         ];
 
-        $data = $this->getData();               
+        $data = $this->getData();  
+
+        $comments = [];        
+        foreach($post->comments as $comment) {
+            $commObj = [
+                "name" => $comment->name,
+                "comment" => $comment->comment
+            ];
+
+            $comments[] = $commObj;
+        }
+        
         
 
         return Inertia::render("SinglePost", [
             "post" => $postContent,
             "data" => $data,
-            "isLoggedIn" => $this->isLoggedIn()
+            "isLoggedIn" => $this->isLoggedIn(),
+            "comments" => $comments
         ]);
     }
 

@@ -44,7 +44,7 @@ export default function NavBar({ page = 'home', isLoggedIn }: Props) {
             {isLoggedIn && (
                 <div className="my-auto mr-7 flex gap-10">
                     <a
-                        href={route('dashboard')}
+                        href={route('admin')}
                         className={`${navLinkClasses} bg-primary-text text-black transition duration-1000 hover:text-white hover:brightness-100`}
                     >
                         Dashboard

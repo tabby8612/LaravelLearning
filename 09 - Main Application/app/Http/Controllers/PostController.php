@@ -71,6 +71,11 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        //-- Since method like create and store doesn't required
+        //-- authorization policy so we can pass class 
+        if ($request->user()->cannot("create", Post::class)) {
+            abort(403);
+        }
         //
         $request->validate([
             "title" => ["required", "min:2"],
@@ -91,7 +96,7 @@ class PostController extends Controller
         $post->title = $submittedPost["title"];
         $post->description = $submittedPost["description"];
         $post->image_path = $fileName;
-        $post->user_id = 1;
+        $post->user_id = $request->user()->id;
 
         echo $post->save() ? "Success" : "Failed";
 
@@ -115,10 +120,18 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request, string $id)
     {
+        
+
         //
         $post = Post::findOrFail($id);
+
+        //-- Adding policy to only allow post owner to update post
+        if ($request->user()->cannot("update", $post)) {
+            abort(403, "You are not owner of this post");
+        }
+
 
         $data = [
             "id" => $id,
@@ -139,6 +152,14 @@ class PostController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $post = Post::findOrFail($id);
+
+        //-- Adding Policy to Not allow user to edit post
+        //-- if it doesn't belong to him.
+        if ($request->user()->cannot("update", $post)) {
+            abort(403, "You are not owner of this post");
+        }
+        
 
         $request->validate([
             "title" => ["required", "min:2"],
@@ -154,7 +175,7 @@ class PostController extends Controller
         
         $post->title = $submittedPost["title"];
         $post->description = $submittedPost["description"];
-        $post->user_id = 1;
+        $post->user_id = $request->user()->id;
 
         if (isset($submittedPost["image"])) {
             $file = $request->file("image");

@@ -49,4 +49,26 @@ class User extends Authenticatable
     public function posts() {
         return $this->hasMany(Post::class);
     } 
+
+    public function roles() {
+        return $this->belongsToMany(Role::class);
+    }
+
+    //-- this isAdministrator() method will be used in before function
+    //-- of the PostPolicy.
+    public function isAdministrator() {
+        $user = auth()->user();
+
+        $isAdmin = false;
+        foreach($user->roles as $role) {
+            if ($role->name === "Administrator") {
+                $isAdmin = true;
+                break;
+            }
+        }
+
+        return $isAdmin;
+
+        
+    }
 }

@@ -1,3 +1,4 @@
+import CommentSection from '@/components/comment-section';
 import HomepageLayout from '@/layouts/homepage-layout';
 import { createContext } from 'react';
 
@@ -10,15 +11,21 @@ type DataType = {
     image: string;
 };
 
+type Comment = {
+    name: string;
+    comment: string;
+};
+
 type Props = {
     post: DataType;
     data: DataType[];
     isLoggedIn: boolean;
+    comments: Comment[];
 };
 
 export const SinglePostContext = createContext<DataType[]>([]);
 
-export default function SinglePost({ post, data, isLoggedIn }: Props) {
+export default function SinglePost({ post, data, isLoggedIn, comments }: Props) {
     return (
         <SinglePostContext.Provider value={data}>
             <HomepageLayout page={post.title} isLoggedIn={isLoggedIn}>
@@ -37,6 +44,8 @@ export default function SinglePost({ post, data, isLoggedIn }: Props) {
                     </div>
                     <p className="py-3.5">{post.description}</p>
                 </div>
+
+                <CommentSection comments={comments} />
             </HomepageLayout>
         </SinglePostContext.Provider>
     );
