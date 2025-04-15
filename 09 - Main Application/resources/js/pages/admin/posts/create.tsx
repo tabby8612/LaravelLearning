@@ -2,6 +2,7 @@ import Button from '@/components/admin/Button';
 import Input from '@/components/admin/Input';
 import Label from '@/components/admin/Label';
 import TextArea from '@/components/admin/TextArea';
+import Tiptap from '@/components/tip-tap';
 import DashboardLayout from '@/layouts/dashboard-layout';
 
 type Props = {
@@ -20,6 +21,7 @@ export default function create({ token }: Props) {
                     <Label labelName="Image" />
                     <input type="file" name="image" className="mb-2.5 w-3xl border-gray-400 p-2 text-white" />;
                     <Label labelName="Description" />
+                    <Tiptap />
                     <TextArea name="description" />
                     <Label labelName="Tags" />
                     <Input name="tags" />

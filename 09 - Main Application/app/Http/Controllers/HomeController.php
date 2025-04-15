@@ -102,11 +102,13 @@ class HomeController extends Controller {
         $postContent = [
             "id" => $post->id,
             "title" => $post->title,
-            "description" => $post->description,
+            "description" => json_decode($post->description) ?? $post->description,
             "updated_at" => $post->updated_at->diffForHumans(),
             "user" => $post->user->name,
             "image" => $post->image_path,
         ];
+
+        
 
         $data = $this->getData();  
 
