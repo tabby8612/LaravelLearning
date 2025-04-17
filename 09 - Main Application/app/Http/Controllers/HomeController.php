@@ -17,6 +17,7 @@ class HomeController extends Controller {
         $data = [];
 
         foreach($posts as $post) {
+            
             $date = Carbon::create($post->updated_at);
             $user = Post::findOrFail($post->id)->user->name;
             
@@ -53,6 +54,13 @@ class HomeController extends Controller {
 
         //-- now we interate to get posts into data
         foreach($paginatorPosts as $post) {
+
+            //-- handling data stored in HTML formatted way
+            $content = json_decode($post->description) ?? $post->description;
+
+            if(is_array($content)) {
+                $content = implode($content);
+            }
             
             $date = Carbon::create($post->updated_at);
             
@@ -61,7 +69,7 @@ class HomeController extends Controller {
             $postObj = [
                 "id" => $post->id,
                 "title" => $post->title,
-                "description" => $post->description,
+                "description" => $content,
                 "image" => $post->image_path,
                 "date" => $date->diffForHumans(),
                 "user" => $user
@@ -98,11 +106,18 @@ class HomeController extends Controller {
     public function post($id) {
         $post = Post::findOrFail($id);
 
+        //-- handling data stored in HTML formatted way
+        $content = json_decode($post->description) ?? $post->description;
+
+        if(is_array($content)) {
+            $content = implode($content);
+        }
+
         
         $postContent = [
             "id" => $post->id,
             "title" => $post->title,
-            "description" => json_decode($post->description) ?? $post->description,
+            "description" => $content,
             "updated_at" => $post->updated_at->diffForHumans(),
             "user" => $post->user->name,
             "image" => $post->image_path,

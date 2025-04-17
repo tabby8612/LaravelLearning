@@ -30,23 +30,31 @@ class PostController extends Controller
     public function posts(Request $request)
     {
 
-        
-        //
         $data = [];
 
         $posts = Post::get()->where("user_id", $request->user()->id);
+
+        
         
         foreach($posts as $post) {
+            $content = json_decode($post->description) ?? $post->description;
+
+            if(is_array($content)) {
+                $content = implode($content);
+            }
+
             $dataObj = [
                 "id" => $post->id,
                 "title" => $post->title,
-                "description" => $post->description,
+                "description" => $content,
                 "image" => $post->image_path,
                 "user" => $post->user->name,                
             ];
 
             $data[] = $dataObj;
         }        
+
+        
 
         return Inertia::render("admin/posts/posts", [
             "data" => $data,
@@ -60,8 +68,8 @@ class PostController extends Controller
     public function create()
     {
         //
-        $token = csrf_token();
-        return Inertia::render("admin/posts/create", ["token" => $token]);
+        
+        return Inertia::render("admin/posts/create");
         
         
     }
@@ -70,12 +78,8 @@ class PostController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        //-- Since method like create and store doesn't required
-        //-- authorization policy so we can pass class 
-        if ($request->user()->cannot("create", Post::class)) {
-            abort(403);
-        }
+    {   
+        
         //
         $request->validate([
             "title" => ["required", "min:2"],
@@ -97,10 +101,11 @@ class PostController extends Controller
         $post->description = $submittedPost["description"];
         $post->image_path = $fileName;
         $post->user_id = $request->user()->id;
+        $post->category_id = $request->category;
 
         echo $post->save() ? "Success" : "Failed";
 
-        return redirect("/admin/posts/all");
+        return redirect(route("admin.posts"));
         
     }
 
@@ -132,13 +137,29 @@ class PostController extends Controller
             abort(403, "You are not owner of this post");
         }
 
+        $content = json_decode($post->description) ?? $post->description;
+
+        if(is_array($content)) {
+            $content = implode($content);
+        }
+
+        //-- reading tags
+        $tags = [];
+        foreach($post->tags as $tag) {
+            $tags[] = [
+                "tag_name" => $tag->tag_name,
+                "id" => $tag->id
+            ];            
+        }
 
         $data = [
             "id" => $id,
             "title" => $post->title,
-            "description" => $post->description,
+            "description" => $content,
             "image" => $post->image_path,
-            "token" => csrf_token()
+            "category_id" => $post->category_id,
+            "token" => csrf_token(),
+            "tags" => $tags
         ];
 
         return Inertia::render("admin/posts/edit", [
@@ -164,10 +185,7 @@ class PostController extends Controller
         $request->validate([
             "title" => ["required", "min:2"],
             "description" => ["required"],            
-        ]);
-
-
-        
+        ]);        
 
         $post = Post::findOrFail($id);
 
@@ -176,6 +194,7 @@ class PostController extends Controller
         $post->title = $submittedPost["title"];
         $post->description = $submittedPost["description"];
         $post->user_id = $request->user()->id;
+        $post->category_id = $request->category;
 
         if (isset($submittedPost["image"])) {
             $file = $request->file("image");
@@ -201,5 +220,23 @@ class PostController extends Controller
         $post->delete();
 
         return redirect("/admin/posts/all");
+    }
+
+    public function removeTag(Request $request, string $postId) {
+       
+        
+        
+        $post = Post::findOrFail($postId);
+
+        //-- Verifying if user is post owner
+        if ($request->user()->cannot("update", $post)) {
+            abort(403, "You are not owner of this post");
+        }
+
+        //-- detach will remove entry from intermiate or pivot table
+        $post->tags()->detach($request->tagId);
+
+        return redirect(route("admin.edit", $postId));
+
     }
 }

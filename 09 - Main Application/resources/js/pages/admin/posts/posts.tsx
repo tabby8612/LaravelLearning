@@ -48,7 +48,11 @@ export default function posts({ data, token }: Props) {
                                         {post.title}
                                     </a>
                                 </td>
-                                <td className="pr-3">{post.description.substring(0, 65)}</td>
+                                {/* <td className="pr-3">{post.description.substring(0, 65)}</td> */}
+                                <td className="pr-3">
+                                    {' '}
+                                    <div dangerouslySetInnerHTML={{ __html: post.description.substring(0, 65) }}></div>{' '}
+                                </td>
                                 <td className="pr-3">
                                     {post.image ? (
                                         <img className="mx-auto my-2 h-14" src={`/images/${post.image}`} alt={post.title} />

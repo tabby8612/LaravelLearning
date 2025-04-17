@@ -157,7 +157,8 @@ export default function DashboardLayout({ title, identifier, user, children }: P
                                 <User className="text-gray-900" />
                                 <div className="">
                                     <h1 className="cursor-pointer text-gray-900" onClick={menuToggler}>
-                                        {user} {isOpen ? <ChevronUp className="mr-6 inline transition" /> : <ChevronDown className="mr-6 inline" />}
+                                        {auth.user.name}{' '}
+                                        {isOpen ? <ChevronUp className="mr-6 inline transition" /> : <ChevronDown className="mr-6 inline" />}
                                     </h1>
                                     {isOpen && (
                                         <div className="text-2xs animate-fade-in-scale absolute top-13 right-5 rounded-xl bg-white px-8 py-2 text-black shadow-2xs shadow-black">

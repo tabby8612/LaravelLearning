@@ -33,6 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource("tags", TagController::class);
 
     Route::resource("categories", CategoryController::class);
+
+    Route::post("post/{id}/tag/detach", [PostController::class, "removeTag"])->name("tag.detach");
 });
 
 

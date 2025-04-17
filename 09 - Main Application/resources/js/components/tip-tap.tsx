@@ -8,7 +8,7 @@ import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
 import { EditorContent, useEditor } from '@tiptap/react';
 
-export default () => {
+export default ({ content = '' }) => {
     const editor = useEditor({
         extensions: [
             Document,
@@ -20,15 +20,7 @@ export default () => {
                 levels: [1, 2, 3],
             }),
         ],
-        content: `
-        <p>This isn’t bold.</p>
-        <p><strong>This is bold.</strong></p>
-        <p><b>And this.</b></p>
-        <p style="font-weight: bold">This as well.</p>
-        <p style="font-weight: bolder">Oh, and this!</p>
-        <p style="font-weight: 500">Cool, isn’t it!?</p>
-        <p style="font-weight: 999">Up to font weight 999!!!</p>
-      `,
+        content: content,
     });
 
     if (!editor) {
@@ -37,7 +29,7 @@ export default () => {
 
     return (
         <>
-            <div className="control-group">
+            <div className="control-group relative bottom-5">
                 <div className="button-group">
                     <button
                         onClick={(e) => {

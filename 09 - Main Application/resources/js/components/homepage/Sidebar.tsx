@@ -1,10 +1,28 @@
 import { PostContext as PostContextContact } from '@/pages/contact';
 import { PostContext } from '@/pages/homepage';
 import { SinglePostContext } from '@/pages/SinglePost';
+import { usePage } from '@inertiajs/react';
 import { SearchIcon } from 'lucide-react';
 import { useContext } from 'react';
 
+type Tag = {
+    id: string;
+    tag_name: string;
+};
+
+type Category = {
+    id: string;
+    category_name: string;
+};
+
+type PageProps = {
+    tags: Tag[];
+    categories: Category[];
+};
+
 export default function Sidebar() {
+    const { tags, categories } = usePage<PageProps>().props;
+
     let data = [];
     const HomePostData = useContext(PostContext) ?? [];
     const ContactPostData = useContext(PostContextContact) ?? [];
@@ -22,7 +40,8 @@ export default function Sidebar() {
     }
 
     console.log(`From Sidebar`);
-    console.log(data);
+    console.log(tags);
+    console.log(categories);
 
     //-- Array.from is shortcut to create array from iterable
     //-- and pass mapping function.
@@ -76,6 +95,38 @@ export default function Sidebar() {
                                 Contact
                             </a>
                         </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="categories">
+                <div className="bg-primary-text mt-9 rounded-t-md text-center text-2xl font-bold text-black">
+                    <h1>Categories</h1>
+                </div>
+                <div className="max(h-20, h-full) relative mb-6 bg-white py-5 pl-2.5 text-black">
+                    <ul>
+                        {categories.map((el) => (
+                            <li className="my-2.5" key={el.id}>
+                                <a href="/" className="text-primary-dark hover:border-b-2 hover:border-amber-300">
+                                    {el.category_name}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+            <div id="tags">
+                <div className="bg-primary-text mt-9 rounded-t-md text-center text-2xl font-bold text-black">
+                    <h1>Tags</h1>
+                </div>
+                <div className="max(h-20, h-full) relative mb-6 bg-white py-5 pl-2.5 text-black">
+                    <ul>
+                        {tags.map((el) => (
+                            <li className="my-2.5" key={el.id}>
+                                <a href="/" className="text-primary-dark hover:border-b-2 hover:border-amber-300">
+                                    {el.tag_name}
+                                </a>
+                            </li>
+                        ))}
                     </ul>
                 </div>
             </div>

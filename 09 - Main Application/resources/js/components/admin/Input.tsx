@@ -16,7 +16,7 @@ export default function Input({ name, type = 'text', value = '', id, onChangeFn,
             id={id}
             defaultValue={value}
             onChange={onChangeFn}
-            className="mb-2.5 w-3xl rounded-xl border-2 border-gray-400 p-2 text-white"
+            className="mb-4 w-3xl rounded-xl border-2 border-gray-400 p-2 text-white"
             {...props}
         />
     );

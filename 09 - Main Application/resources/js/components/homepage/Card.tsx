@@ -24,7 +24,7 @@ export function Card({ id, image, date, title, description, user }: Props) {
                     <h1 className="font-poppins text-primary-dark px-3.5 py-2.5 text-2xl font-bold hover:text-blue-800">{title}</h1>
                 </a>
                 <p className="border-gray-400 px-3.5 py-2.5 after:mx-auto after:my-6 after:block after:w-[70%] after:rounded-xl after:border-1 after:border-gray-200">
-                    {description}
+                    <div dangerouslySetInnerHTML={{ __html: description.substring(0, 100) }}></div>
                 </p>
                 <div className="mx-3 my-auto flex gap-5 align-middle">
                     <UserIcon className="my-auto size-8" />

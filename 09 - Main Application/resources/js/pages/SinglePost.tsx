@@ -42,7 +42,7 @@ export default function SinglePost({ post, data, isLoggedIn, comments }: Props) 
                     <div className="flex size-96 justify-center py-6">
                         <img src={`/images/${post.image}`} alt={post.title} />
                     </div>
-                    <p className="py-3.5">{post.description}</p>
+                    <div className="py-3.5" dangerouslySetInnerHTML={{ __html: post.description }}></div>
                 </div>
 
                 <CommentSection comments={comments} />
