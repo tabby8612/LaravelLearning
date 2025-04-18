@@ -10,8 +10,6 @@ type Props = {
 };
 
 export default function HomepageLayout({ page = 'homepage', isLoggedIn, children }: Props) {
-    console.log(`From Homepage Layout`);
-    console.log(isLoggedIn);
     return (
         <>
             <div id="header">

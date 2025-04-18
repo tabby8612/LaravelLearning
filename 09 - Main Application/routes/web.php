@@ -35,6 +35,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource("categories", CategoryController::class);
 
     Route::post("post/{id}/tag/detach", [PostController::class, "removeTag"])->name("tag.detach");
+    
+    Route::post("post/{id}/tag/attach", [PostController::class, "attachTag"])->name("tag.attach");
 });
 
 

@@ -29,7 +29,6 @@ export default function Sidebar() {
     const SinglePostData = useContext(SinglePostContext) ?? [];
 
     const curPage = window.location.pathname.split('/')[1];
-    console.log(curPage);
 
     if (curPage === 'contact') {
         data = ContactPostData;
@@ -38,10 +37,6 @@ export default function Sidebar() {
     } else {
         data = HomePostData;
     }
-
-    console.log(`From Sidebar`);
-    console.log(tags);
-    console.log(categories);
 
     //-- Array.from is shortcut to create array from iterable
     //-- and pass mapping function.

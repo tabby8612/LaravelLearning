@@ -1,6 +1,7 @@
 import { Card as PostCard } from '@/components/homepage/Card';
 import Pagination from '@/components/homepage/Pagination';
 import HomepageLayout from '@/layouts/homepage-layout';
+import { usePage } from '@inertiajs/react';
 import { createContext } from 'react';
 
 type DataType = {
@@ -10,6 +11,7 @@ type DataType = {
     user: string;
     date: string;
     image: string;
+    category: string;
 };
 
 type Props = {
@@ -25,7 +27,18 @@ type Props = {
 //-- pass value to consume it with useContext.
 export const PostContext = createContext<DataType[]>([]);
 
+type Category = {
+    category_name: string;
+    id: string;
+};
+
+type PageProps = {
+    categories: Category[];
+};
+
 export default function Homepage({ data, totalPages, isLoggedIn }: Props) {
+    const { categories } = usePage<PageProps>().props;
+
     const numbers: number[] = [];
 
     for (let i = 0; i < totalPages; i++) {
@@ -36,6 +49,13 @@ export default function Homepage({ data, totalPages, isLoggedIn }: Props) {
         <PostContext.Provider value={data}>
             <HomepageLayout page="Homepage" isLoggedIn={isLoggedIn}>
                 <div id="content" className="ml-10">
+                    <div id="CategoryFilter" className="mx-auto mt-6 flex justify-center gap-3.5">
+                        {categories.map((el) => (
+                            <button className="bg-primary-dark cursor-pointer rounded-[10px] px-5 py-3 text-white hover:brightness-125" key={el.id}>
+                                {el.category_name}
+                            </button>
+                        ))}
+                    </div>
                     {data.map((el) => (
                         <PostCard
                             id={el.id}
@@ -45,6 +65,7 @@ export default function Homepage({ data, totalPages, isLoggedIn }: Props) {
                             description={el.description}
                             user={el.user}
                             key={el.id}
+                            category={el.category}
                         />
                     ))}
 

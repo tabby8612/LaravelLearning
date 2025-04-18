@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -80,6 +81,7 @@ class PostController extends Controller
     public function store(Request $request)
     {   
         
+        
         //
         $request->validate([
             "title" => ["required", "min:2"],
@@ -103,7 +105,29 @@ class PostController extends Controller
         $post->user_id = $request->user()->id;
         $post->category_id = $request->category;
 
-        echo $post->save() ? "Success" : "Failed";
+        $post->save();
+
+        $latestPost = Post::get()->last();
+
+        //-- handles tags if it is not available in tags table then it will add
+        //-- and attach to intermediate table post_tag otherwise it will attach
+        //-- only, and this will execute if tags array is being passed
+        if (!empty($request->tags)) {
+            foreach($request->tags as $tag) {
+                $findTag = Tag::all()->where("tag_name", trim($tag))->first();
+
+                if (empty($findTag)) {
+                    $newTag = Tag::create(["tag_name" => trim($tag)]);
+
+                    $post = Post::findOrFail($latestPost->id);
+                    $post->tags()->attach($newTag->id);
+                } else {
+
+                    $post = Post::findOrFail($latestPost->id);
+                    $post->tags()->attach($findTag->id);
+                }
+            }
+        }
 
         return redirect(route("admin.posts"));
         
@@ -238,5 +262,25 @@ class PostController extends Controller
 
         return redirect(route("admin.edit", $postId));
 
+    }
+
+    public function attachTag(Request $request, string $postId) {
+        $tag = Tag::all()->where("tag_name", trim($request->tag))->first();
+        
+
+        if (empty($tag)) {
+            $newTag = Tag::create([
+                "tag_name" => trim($request->tag)
+            ]);
+
+            $post = Post::findOrFail($postId);
+            $post->tags()->attach($newTag->id);
+
+        } else {            
+            $post = Post::findOrFail($postId);
+            $post->tags()->attach($tag->id);
+        }
+        
+        return redirect()->back();
     }
 }

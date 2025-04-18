@@ -1,6 +1,6 @@
 import { router, usePage } from '@inertiajs/react';
 import { Speech } from 'lucide-react';
-import { FormEvent } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { Icon } from './icon';
 
 type Comment = {
@@ -19,17 +19,24 @@ type PageProps = {
 };
 
 export default function CommentSection({ comments }: Props) {
-    const { post } = usePage<PageProps>().props;
+    const { post, errors } = usePage<PageProps>().props;
+    const [comment, setComment] = useState('');
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
         const commentText = document.getElementById('comment') as HTMLInputElement;
 
-        return router.post(route('comment.store'), {
+        router.post(route('comment.store'), {
             comment: commentText.value,
             postId: post.id,
         });
+
+        setComment('');
+    }
+
+    function commentHandler(e: ChangeEvent<HTMLTextAreaElement>) {
+        setComment(e.target.value);
     }
 
     return (
@@ -48,10 +55,13 @@ export default function CommentSection({ comments }: Props) {
                             rows={6}
                             className="w-full border-0 px-0 text-sm text-gray-900 focus:ring-0 focus:outline-none dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
                             placeholder="Write a comment..."
-                            defaultValue=""
+                            value={comment}
                             required
+                            onChange={commentHandler}
                         ></textarea>
                     </div>
+                    {errors && <p className="mb-2.5 text-[13px] text-red-500">{errors.comment}</p>}
+
                     <button
                         type="submit"
                         className="bg-primary-dark focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800 inline-flex items-center rounded-lg px-4 py-2.5 text-center text-xs font-medium text-white focus:ring-4"

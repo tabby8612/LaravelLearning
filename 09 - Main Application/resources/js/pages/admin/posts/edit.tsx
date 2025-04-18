@@ -35,7 +35,6 @@ type Props = {
 
 export default function Edit({ data }: Props) {
     const { categories } = usePage<PageProps>().props;
-    console.log(data);
 
     function submitHandler(e: FormEvent<HTMLInputElement>) {
         e.preventDefault();
@@ -104,12 +103,14 @@ export default function Edit({ data }: Props) {
                         name="tags"
                         className="mb-4 w-3xl rounded-xl border-2 border-gray-400 p-2 text-white"
                         onChange={(e) => {
-                            console.log(e.target.value);
                             if (e.target.value.includes(',')) {
-                                console.log('yes');
-
                                 // add logic to attach tag if tag is present
                                 // else add new tag and attach
+                                const tag = e.target.value.split(',')[0];
+                                router.post(route('tag.attach', data.id), {
+                                    tag: tag,
+                                });
+                                e.target.value = '';
                             }
                         }}
                     />
@@ -117,7 +118,7 @@ export default function Edit({ data }: Props) {
                         <ul className="ml-3 flex gap-3 align-middle">
                             {data.tags.length > 0 &&
                                 data.tags.map((el) => (
-                                    <li className="rounded-[5px] bg-slate-400 px-2 py-1 align-middle text-[12px]">
+                                    <li className="rounded-[5px] bg-slate-400 px-2 py-1 align-middle text-[12px]" key={el.id}>
                                         {el.tag_name}{' '}
                                         <X
                                             className="ml-1 inline size-3.5 cursor-pointer rounded-[5px] hover:text-white"

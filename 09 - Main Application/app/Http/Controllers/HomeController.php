@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
+use Cache;
 use Carbon\Carbon;
 use Carbon\Traits\Timestamp;
 use DB;
@@ -20,6 +22,8 @@ class HomeController extends Controller {
             
             $date = Carbon::create($post->updated_at);
             $user = Post::findOrFail($post->id)->user->name;
+
+            
             
             $postObj = [
                 "title" => $post->title,
@@ -54,6 +58,7 @@ class HomeController extends Controller {
 
         //-- now we interate to get posts into data
         foreach($paginatorPosts as $post) {
+            
 
             //-- handling data stored in HTML formatted way
             $content = json_decode($post->description) ?? $post->description;
@@ -65,14 +70,26 @@ class HomeController extends Controller {
             $date = Carbon::create($post->updated_at);
             
             $user = Post::findOrFail($post->id)->user->name;
+
+            //-- since $post is Stdclass so we need to do this way
+            //-- otherwise Post instance has category method
+            // $category = Category::all()->where("id", $post->category_id)->first()->category_name;
+
             
+            $category = Post::where("id", $post->id)->first()->category;
+            
+            // Cache::flush(); //-- is used to clean cache
+            
+
             $postObj = [
                 "id" => $post->id,
                 "title" => $post->title,
                 "description" => $content,
                 "image" => $post->image_path,
                 "date" => $date->diffForHumans(),
-                "user" => $user
+                "user" => $user,
+                "category" => $category ? $category->category_name : "Not Listed" 
+                
             ];
             
             $data[] = $postObj;
@@ -113,6 +130,13 @@ class HomeController extends Controller {
             $content = implode($content);
         }
 
+        $tags = [];
+        foreach($post->tags as $tag) {
+            $tags[] = [
+                "id" => $tag->id,
+                "name" => $tag->tag_name
+            ];
+        }        
         
         $postContent = [
             "id" => $post->id,
@@ -121,6 +145,8 @@ class HomeController extends Controller {
             "updated_at" => $post->updated_at->diffForHumans(),
             "user" => $post->user->name,
             "image" => $post->image_path,
+            "category" => $post->category->category_name,
+            "tags" => $tags
         ];
 
         

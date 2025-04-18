@@ -21,9 +21,7 @@ type PageProps = {
 };
 
 export default function DashboardLayout({ title, identifier, user, children }: Props) {
-    console.log(identifier);
     const { auth } = usePage<PageProps>().props;
-    console.log(auth);
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 

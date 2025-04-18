@@ -2,6 +2,11 @@ import CommentSection from '@/components/comment-section';
 import HomepageLayout from '@/layouts/homepage-layout';
 import { createContext } from 'react';
 
+type Tag = {
+    id: string;
+    name: string;
+};
+
 type DataType = {
     id: string;
     title: string;
@@ -9,6 +14,8 @@ type DataType = {
     updated_at: string;
     user: string;
     image: string;
+    category: string;
+    tags: Tag[];
 };
 
 type Comment = {
@@ -39,10 +46,24 @@ export default function SinglePost({ post, data, isLoggedIn, comments }: Props) 
                             Posted On: <span className="text-primary-dark">{post.updated_at}</span>
                         </p>
                     </div>
+
                     <div className="flex size-96 justify-center py-6">
                         <img src={`/images/${post.image}`} alt={post.title} />
                     </div>
                     <div className="py-3.5" dangerouslySetInnerHTML={{ __html: post.description }}></div>
+                    <div id="postFooter">
+                        <p>
+                            Category: <span className="text-primary-dark">{post.category}</span>
+                        </p>
+                        <p>
+                            Tags:{' '}
+                            {post.tags?.map((el) => (
+                                <span className="text-primary-dark mr-5 text-[13px]" key={el.id}>
+                                    {el.name}
+                                </span>
+                            ))}
+                        </p>
+                    </div>
                 </div>
 
                 <CommentSection comments={comments} />
