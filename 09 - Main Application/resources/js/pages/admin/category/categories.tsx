@@ -7,6 +7,7 @@ type Category = {
     name: string;
     created_at: string;
     updated_at: string;
+    postsCount: string;
 };
 
 type Props = {
@@ -69,6 +70,7 @@ export default function Categories({ categoriesData, curUser, message }: Props) 
                         <tr className="text-l rounded-2xl bg-blue-100 py-2">
                             <th className="rounded-2xl px-2.5 py-1">Id</th>
                             <th className="w-4xl px-2.5">Category</th>
+                            <th className="w-4xl px-2.5">Post Count</th>
                             <th className="w-4xl px-2.5">Created</th>
                             <th className="w-4xl px-2.5">Updated</th>
                             <th className="w-4xl px-7">Action</th>
@@ -84,6 +86,7 @@ export default function Categories({ categoriesData, curUser, message }: Props) 
                                         {category.name}
                                     </a>
                                 </td>
+                                <td className="pr-3 text-center">{category.postsCount}</td>
                                 <td className="pr-3 text-center">{category.created_at}</td>
                                 <td className="pr-3 text-center">{category.updated_at}</td>
                                 <td

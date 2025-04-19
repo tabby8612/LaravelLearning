@@ -14,15 +14,15 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
-        
-                
+        //               
 
         $categories = Category::all();
 
         $categoriesData = [];
 
         foreach($categories as $category) {
+
+         
             
 
             $categoriesData[] = [
@@ -30,6 +30,7 @@ class CategoryController extends Controller
                 "name" => $category->category_name,
                 "created_at" => $category->created_at->isoFormat("DD-MM-YYYY"),
                 "updated_at" => $category->updated_at->isoFormat("DD-MM-YYYY"),
+                "postsCount" => $category->posts()->count()
             ];
         }
 
@@ -120,7 +121,7 @@ class CategoryController extends Controller
         //
         $category->delete();
 
-        Session::put("message", "Category Deleted");
+        
 
         return;
 

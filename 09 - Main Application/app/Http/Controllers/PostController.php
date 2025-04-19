@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -33,9 +35,14 @@ class PostController extends Controller
 
         $data = [];
 
-        $posts = Post::get()->where("user_id", $request->user()->id);
+        if ($request->user()->isAdministrator()) {
+            // $posts = Post::all();
+            $posts = DB::table("posts")->paginate(10);
+        } else {
+            $posts = Post::get()->where("user_id", $request->user()->id);
+        }
 
-        
+        // dd($posts);
         
         foreach($posts as $post) {
             $content = json_decode($post->description) ?? $post->description;
@@ -49,17 +56,22 @@ class PostController extends Controller
                 "title" => $post->title,
                 "description" => $content,
                 "image" => $post->image_path,
-                "user" => $post->user->name,                
+                "user" => User::where("id", $post->user_id)->first()->name,   
+                "category" => Category::where("id", $post->category_id)->first()->category_name             
             ];
 
             $data[] = $dataObj;
-        }        
+        }  
+        
+        //-- paginator object have many methods like total(), perPage(), count() etc.
+        $pages = ceil($posts->total() / $posts->perPage());
 
         
 
         return Inertia::render("admin/posts/posts", [
             "data" => $data,
             "token" => csrf_token(),
+            "totalPages" => $pages,
         ]);
     }
 

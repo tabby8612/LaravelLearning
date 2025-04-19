@@ -1,8 +1,8 @@
 import { Card as PostCard } from '@/components/homepage/Card';
 import Pagination from '@/components/homepage/Pagination';
 import HomepageLayout from '@/layouts/homepage-layout';
-import { usePage } from '@inertiajs/react';
-import { createContext } from 'react';
+import { router, usePage } from '@inertiajs/react';
+import { createContext, FormEvent } from 'react';
 
 type DataType = {
     id: string;
@@ -45,13 +45,26 @@ export default function Homepage({ data, totalPages, isLoggedIn }: Props) {
         numbers.push(i + 1);
     }
 
+    function handleCategorySubmit(e: FormEvent<HTMLButtonElement & { id: string }>) {
+        e.preventDefault();
+
+        const button = e.target as HTMLButtonElement;
+        console.log(button.id);
+        router.get(route('categoryPosts', button.id));
+    }
+
     return (
         <PostContext.Provider value={data}>
             <HomepageLayout page="Homepage" isLoggedIn={isLoggedIn}>
                 <div id="content" className="ml-10">
                     <div id="CategoryFilter" className="mx-auto mt-6 flex justify-center gap-3.5">
                         {categories.map((el) => (
-                            <button className="bg-primary-dark cursor-pointer rounded-[10px] px-5 py-3 text-white hover:brightness-125" key={el.id}>
+                            <button
+                                className="bg-primary-dark cursor-pointer rounded-[10px] px-5 py-3 text-white hover:brightness-125"
+                                id={el.id}
+                                key={el.id}
+                                onClick={handleCategorySubmit}
+                            >
                                 {el.category_name}
                             </button>
                         ))}

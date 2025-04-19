@@ -1,4 +1,5 @@
 import Input from '@/components/admin/Input';
+import Pagination from '@/components/homepage/Pagination';
 import DashboardLayout from '@/layouts/dashboard-layout';
 
 type Props = {
@@ -8,12 +9,21 @@ type Props = {
         description: string;
         image: string;
         user: string;
+        category: string;
     }[];
     token: string;
+    totalPages: number;
 };
 
-export default function posts({ data, token }: Props) {
+export default function posts({ data, token, totalPages }: Props) {
     const linkClasses = 'hover:text-primary-text cursor-pointer text-center hover:underline text-primary-text font-bold';
+
+    const numbers: number[] = [];
+
+    for (let i = 0; i < totalPages; i++) {
+        numbers.push(i + 1);
+    }
+
     return (
         <DashboardLayout title="All Posts" identifier="posts">
             <div className="mx-12 my-12">
@@ -32,8 +42,9 @@ export default function posts({ data, token }: Props) {
                         <tr className="">
                             <th className="px-2.5">S.No</th>
                             <th className="px-2.5">Author</th>
-                            <th className="w-2xl px-2.5">Title</th>
+                            <th className="w-7xl px-2.5">Title</th>
                             <th className="w-7xl px-2.5">Description</th>
+                            <th className="px-2.5">Category</th>
                             <th className="w-4xl px-2.5">Image</th>
                             <th className="px-7">Action</th>
                         </tr>
@@ -48,11 +59,11 @@ export default function posts({ data, token }: Props) {
                                         {post.title}
                                     </a>
                                 </td>
-                                {/* <td className="pr-3">{post.description.substring(0, 65)}</td> */}
                                 <td className="pr-3">
                                     {' '}
                                     <div dangerouslySetInnerHTML={{ __html: post.description.substring(0, 65) }}></div>{' '}
                                 </td>
+                                <td className="text-center">{post.category}</td>
                                 <td className="pr-3">
                                     {post.image ? (
                                         <img className="mx-auto my-2 h-14" src={`/images/${post.image}`} alt={post.title} />
@@ -77,6 +88,11 @@ export default function posts({ data, token }: Props) {
                         ))}
                     </tbody>
                 </table>
+                <div className="my-10 flex justify-end gap-3">
+                    {numbers.map((el) => (
+                        <Pagination num={el} key={el} />
+                    ))}
+                </div>
             </div>
         </DashboardLayout>
     );

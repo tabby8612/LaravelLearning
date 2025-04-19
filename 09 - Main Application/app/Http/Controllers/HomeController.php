@@ -173,6 +173,61 @@ class HomeController extends Controller {
         ]);
     }
 
+    public function categoryPost(Request $request, string $categoryId) {
+        
+        // $posts = Post::get()->where("category_id", $categoryId);
+
+        // dd($posts->all());
+
+        $paginatorPosts = DB::table("posts")->where("category_id", $categoryId)->paginate(5);
+
+        
+        $postData = [];
+
+        foreach($paginatorPosts as $post) {
+
+            $date = Carbon::create($post->updated_at);
+            $category = Post::where("id", $post->id)->first()->category;
+            $user = Post::findOrFail($post->id)->user->name;
+            
+            //-- handling data stored in HTML formatted way
+            $content = json_decode($post->description) ?? $post->description;
+
+            if(is_array($content)) {
+                $content = implode($content);
+            }   
+
+            $postObj = [
+                "id" => $post->id,
+                "title" => $post->title,
+                "description" => $content,
+                "image" => $post->image_path,
+                "date" => $date->diffForHumans(),
+                "user" => $user,
+                "category" => $category ? $category->category_name : "Not Listed" 
+                
+            ];
+            
+            $postData[] = $postObj;
+        }
+
+        //-- paginator object have many methods like total(), perPage(), count() etc.
+        $pages = ceil($paginatorPosts->total() / $paginatorPosts->perPage());
+        
+
+        return Inertia::render('homepage', [
+            "data" => $postData,
+            "totalPages" => $pages,
+            "isLoggedIn" => $this->isLoggedIn()
+            
+        ]);     
+              
+        
+
+    }
+
+
+
     /* 
     public function chkPageinate() {
         

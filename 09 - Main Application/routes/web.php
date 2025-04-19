@@ -20,6 +20,8 @@ Route::get("about", [HomeController::class, "about"]);
 
 Route::get("post/{id}", [HomeController::class, "post"]);
 
+Route::get("{categoryId}/post", [HomeController::class, "categoryPost"])->name("categoryPosts");
+
 Route::resource("comment", CommentController::class);
 
 Route::middleware(['auth', 'verified'])->group(function () {    
