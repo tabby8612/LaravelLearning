@@ -5,7 +5,7 @@ A Personal blog created with Laravel + Inertia + React + Typescript
 
 ---
 
-![Version](https://img.shields.io/badge/version-0.9-blue)![PHP Version](https://img.shields.io/badge/PHP-%5E8.2-navy)![Laravel Version](https://img.shields.io/badge/laravel-%5E12-red)![React](https://img.shields.io/badge/react-%5E19-purple)
+![Version](https://img.shields.io/badge/version-0.9-blue) ![PHP Version](https://img.shields.io/badge/PHP-%5E8.2-navy) ![Laravel Version](https://img.shields.io/badge/laravel-%5E12-red) ![React](https://img.shields.io/badge/react-%5E19-purple)
 
 ---
 
