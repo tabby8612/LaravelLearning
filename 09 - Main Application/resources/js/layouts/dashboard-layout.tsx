@@ -1,13 +1,12 @@
 import SidebarTab from '@/components/admin/SidebarTab';
 import { BookmarkIcon, Cog6ToothIcon, GlobeAltIcon, PencilSquareIcon, UserIcon } from '@heroicons/react/24/solid';
 import { Head, router, usePage } from '@inertiajs/react';
-import { BellIcon, ChevronDown, ChevronUp, SearchIcon, TagsIcon, User } from 'lucide-react';
+import { BellIcon, ChevronDown, ChevronUp, PersonStanding, SearchIcon, TagsIcon, User } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 
 type Props = {
     title: string;
     identifier: string;
-    user?: string;
     children: ReactNode;
 };
 
@@ -20,7 +19,7 @@ type PageProps = {
     };
 };
 
-export default function DashboardLayout({ title, identifier, user, children }: Props) {
+export default function DashboardLayout({ title, identifier, children }: Props) {
     const { auth } = usePage<PageProps>().props;
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -141,6 +140,17 @@ export default function DashboardLayout({ title, identifier, user, children }: P
                                 },
                             ]}
                             clickFn={clickHandler}
+                        />
+                        <SidebarTab
+                            tabName="roles"
+                            curTab={identifier === 'roles'}
+                            Icon={PersonStanding}
+                            items={[
+                                {
+                                    name: 'All Roles',
+                                    param: route('roles.index'),
+                                },
+                            ]}
                         />
                     </div>
                     <div className="flex w-[85%] flex-col">

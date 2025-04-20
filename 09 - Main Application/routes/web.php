@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Models\Post;
@@ -29,6 +30,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource("admin", PostController::class);
 
     Route::get('admin', [PostController::class, "index"])->name('admin')->can("isAdmin", Post::class);
+
+    Route::get("admin/roles/all", [RoleController::class, "index"])->name("roles.index");
+    
+    Route::post("admin/roles/{id}/attach", [RoleController::class, "attach"])->name("roles.attach");
+    
+    Route::post("admin/roles/{id}/detach", [RoleController::class, "detach"])->name("roles.detach");
     
     Route::resource("user", UserController::class);
 

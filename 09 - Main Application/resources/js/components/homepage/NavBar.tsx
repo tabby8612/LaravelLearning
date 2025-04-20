@@ -1,4 +1,4 @@
-import { Book } from 'lucide-react';
+import { Brain } from 'lucide-react';
 
 type Props = {
     page: string;
@@ -11,7 +11,7 @@ export default function NavBar({ page = 'home', isLoggedIn }: Props) {
     return (
         <nav className="bg-primary-dark flex min-h-15 w-full justify-between text-white">
             <div className="my-auto ml-7 flex gap-5">
-                <Book className="mt-2 mr-4" />
+                <Brain className="mt-2 mr-4" />
                 <a className={`${navLinkClasses} ${page === 'homepage' && 'text-primary-text'}`} href="/">
                     Home
                 </a>

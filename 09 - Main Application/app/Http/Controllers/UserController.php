@@ -37,13 +37,8 @@ class UserController extends Controller
             ];
         }
 
-        $authUser = Auth::user()->name;
-
-        
-
         return Inertia::render("admin/users/users", [
             "usersData" => $usersData,
-            "activeUser" => $authUser,
             "message" => $message
         ]);
     }

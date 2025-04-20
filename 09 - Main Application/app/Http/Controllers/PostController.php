@@ -21,11 +21,14 @@ class PostController extends Controller
         //
         $posts = Post::all()->count();
         $users = User::all()->count();
+        $tags = Tag::all()->count();
+        $categories = Category::all()->count();
 
         return Inertia::render("admin/dashboard", [
             "postsCount" => $posts,
             "usersCount" => $users,
-            "username" => $request->user()->name
+            "tagsCount" => $tags,
+            "categoriesCount" => $categories
         ]);
         
     }

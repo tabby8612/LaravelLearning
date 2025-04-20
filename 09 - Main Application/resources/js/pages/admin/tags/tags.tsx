@@ -11,14 +11,13 @@ type Tag = {
 
 type Props = {
     tagsData: Tag[];
-    curUser: string;
 };
 
 type PageProps = {
     message?: string;
 };
 
-export default function Tags({ tagsData, curUser }: Props) {
+export default function Tags({ tagsData }: Props) {
     const SessionData = usePage<PageProps>().props;
     const [successMessage, setSuccessMessage] = useState(SessionData.message);
 
@@ -41,7 +40,7 @@ export default function Tags({ tagsData, curUser }: Props) {
     const linkClasses = 'hover:text-primary-text cursor-pointer text-center hover:underline text-primary-text font-bold';
 
     return (
-        <DashboardLayout title="All Tags" identifier="tags" user={curUser}>
+        <DashboardLayout title="All Tags" identifier="tags">
             <div className="mx-12 mt-12 box-border flex">
                 <div className="flex w-full justify-between gap-7 align-baseline">
                     <h1 className="text-primary-text font-poppins my-7 text-5xl font-medium">All Tags</h1>

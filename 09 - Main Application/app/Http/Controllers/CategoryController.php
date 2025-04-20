@@ -20,9 +20,7 @@ class CategoryController extends Controller
 
         $categoriesData = [];
 
-        foreach($categories as $category) {
-
-         
+        foreach($categories as $category) { 
             
 
             $categoriesData[] = [
@@ -34,15 +32,13 @@ class CategoryController extends Controller
             ];
         }
 
-        $curUser = auth()->user()->name;
-
         //-- reading message from session passed as feedback
         $message = Session::get("message");
         
         
         //-- similar to ["categoriesData" => $categoriesData, "curUser" => $curUser ]
         return Inertia::render("admin/category/categories", 
-        compact("categoriesData", "curUser", "message"));
+        compact("categoriesData", "message"));
     }
 
     /**

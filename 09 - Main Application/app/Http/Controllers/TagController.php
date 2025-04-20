@@ -33,12 +33,10 @@ class TagController extends Controller
             ];
         }
 
-        $curUser = auth()->user()->name;        
         $message = Session::get("message");
         
         return Inertia::render("admin/tags/tags", [
             "tagsData" => $tagsData,
-            "curUser" => $curUser,
             "message" => $message
         ]);
     }

@@ -12,17 +12,15 @@ type Category = {
 
 type Props = {
     categoriesData: Category[];
-    curUser: string;
     message: string;
 };
 
-export default function Categories({ categoriesData, curUser, message }: Props) {
+export default function Categories({ categoriesData, message }: Props) {
     //-- usePage().props will contain all props passed it
     //-- Useful for populating data when validation failed
     //-- Also useful for displaying errors
 
     const [successMessage, setSuccessMessage] = useState(message);
-    console.log(successMessage);
 
     useEffect(() => {
         if (!successMessage) return;
@@ -45,7 +43,7 @@ export default function Categories({ categoriesData, curUser, message }: Props) 
     const linkClasses = 'hover:text-primary-text cursor-pointer text-center hover:underline text-primary-text font-bold';
 
     return (
-        <DashboardLayout title="All Categories" identifier="categories" user={curUser}>
+        <DashboardLayout title="All Categories" identifier="categories">
             <div className="mx-12 mt-12 box-border flex">
                 <div className="flex w-full justify-between gap-7 align-baseline">
                     <h1 className="text-primary-text font-poppins my-7 text-5xl font-medium">All Categories</h1>

@@ -12,11 +12,10 @@ interface userData {
 
 type Props = {
     usersData: userData[];
-    activeUser: string;
     message: string;
 };
 
-export default function Users({ usersData, activeUser, message }: Props) {
+export default function Users({ usersData, message }: Props) {
     const [showMessage, setShowMessage] = useState(message);
 
     useEffect(() => {
@@ -32,7 +31,7 @@ export default function Users({ usersData, activeUser, message }: Props) {
     }
 
     return (
-        <DashboardLayout title="All Users" identifier="users" user={activeUser}>
+        <DashboardLayout title="All Users" identifier="users">
             <div className="mx-12 mt-12 box-border flex">
                 <div className="flex w-full justify-between gap-7 align-baseline">
                     <h1 className="text-primary-text font-poppins my-7 text-5xl font-medium">All Users</h1>
