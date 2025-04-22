@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use Carbon\Traits\Timestamp;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class CommentController extends Controller
 {
@@ -28,19 +30,23 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
+        
         //
         $request->validate([
-            "comment" => ["required", "min:10"]
+            "comment" => ["required", "min:30"]
         ]);
 
-        $randomNames = ["Adam", "James", "Smith", "Jacob", "Michael"];
         $comment = new Comment();
-        $comment->name = $randomNames[rand(0,4)];
+        $comment->name = auth()->user()->name;
         $comment->comment = $request->comment;
         $comment->post_id = $request->postId;
+        $comment->created_at = now();
         $comment->save();
 
-        return redirect("post/{$request->postId}");
+        session(["message" => "Comment Posted"]);
+
+        // return redirect()->action([HomeController::class, "post"], $request->postId);
+        
         
     }
 

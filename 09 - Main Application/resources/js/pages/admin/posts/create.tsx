@@ -73,7 +73,9 @@ export default function Create() {
                         <p className="my-2 text-xs text-slate-50">PNG, JPG SVG, WEBP, and GIF are Allowed.</p>
                     </div>
                     <Label labelName="Description" />
-                    <Tiptap content="Write Something Meaningful" />
+                    <div className="text-white">
+                        <Tiptap content="Write Something Meaningful" />
+                    </div>
                     <Label labelName="Category" />
                     <select name="categories" id="categories1" className="mb-6 rounded-lg bg-slate-300 py-2 pr-5 pl-4" defaultValue="Select Category">
                         <option value="">Select Category</option>

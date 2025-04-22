@@ -28,11 +28,12 @@ type Props = {
     data: DataType[];
     isLoggedIn: boolean;
     comments: Comment[];
+    message: string;
 };
 
 export const SinglePostContext = createContext<DataType[]>([]);
 
-export default function SinglePost({ post, data, isLoggedIn, comments }: Props) {
+export default function SinglePost({ post, data, isLoggedIn }: Props) {
     return (
         <SinglePostContext.Provider value={data}>
             <HomepageLayout page={post.title} isLoggedIn={isLoggedIn}>
@@ -66,7 +67,7 @@ export default function SinglePost({ post, data, isLoggedIn, comments }: Props) 
                     </div>
                 </div>
 
-                <CommentSection comments={comments} />
+                <CommentSection />
             </HomepageLayout>
         </SinglePostContext.Provider>
     );

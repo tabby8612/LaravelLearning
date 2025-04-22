@@ -120,7 +120,7 @@ class HomeController extends Controller {
     }
 
 
-    public function post($id) {
+    public function post(Request $request, string $id) {
         $post = Post::findOrFail($id);
 
         //-- handling data stored in HTML formatted way
@@ -155,21 +155,25 @@ class HomeController extends Controller {
 
         $comments = [];        
         foreach($post->comments as $comment) {
+            
             $commObj = [
+                "id" => $comment->id,
                 "name" => $comment->name,
-                "comment" => $comment->comment
+                "comment" => json_decode($comment->comment) ?? $comment->comment 
             ];
 
             $comments[] = $commObj;
         }
         
-        
+        $message = $request->session()->pull("message");
+
 
         return Inertia::render("SinglePost", [
             "post" => $postContent,
             "data" => $data,
             "isLoggedIn" => $this->isLoggedIn(),
-            "comments" => $comments
+            "comments" => $comments,
+            "message" => $message
         ]);
     }
 
