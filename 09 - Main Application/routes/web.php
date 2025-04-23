@@ -19,7 +19,7 @@ Route::get("contact", [HomeController::class, "contact"]);
 
 Route::get("about", [HomeController::class, "about"]);
 
-Route::get("post/{id}", [HomeController::class, "post"]);
+Route::get("post/{id}", [HomeController::class, "post"])->name("single.post");
 
 Route::get("{categoryId}/post", [HomeController::class, "categoryPost"])->name("categoryPosts");
 
@@ -31,7 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('admin', [PostController::class, "index"])->name('admin')->can("isAdmin", Post::class);
 
-    Route::get("admin/roles/all", [RoleController::class, "index"])->name("roles.index");
+    Route::get("admin/roles/all", [RoleController::class, "index"])->name("roles.index")->can("isAdmin", Post::class);
     
     Route::post("admin/roles/{id}/attach", [RoleController::class, "attach"])->name("roles.attach");
     

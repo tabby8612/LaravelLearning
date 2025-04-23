@@ -1,7 +1,7 @@
 import SidebarTab from '@/components/admin/SidebarTab';
 import { BookmarkIcon, Cog6ToothIcon, GlobeAltIcon, PencilSquareIcon, UserIcon } from '@heroicons/react/24/solid';
 import { Head, router, usePage } from '@inertiajs/react';
-import { BellIcon, ChevronDown, ChevronUp, PersonStanding, SearchIcon, TagsIcon, User } from 'lucide-react';
+import { BellIcon, ChevronDown, ChevronUp, PersonStanding, SearchIcon, SpeechIcon, TagsIcon, User } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 
 type Props = {
@@ -149,6 +149,17 @@ export default function DashboardLayout({ title, identifier, children }: Props) 
                                 {
                                     name: 'All Roles',
                                     param: route('roles.index'),
+                                },
+                            ]}
+                        />
+                        <SidebarTab
+                            tabName="comments"
+                            curTab={identifier === 'comments'}
+                            Icon={SpeechIcon}
+                            items={[
+                                {
+                                    name: 'All Comments',
+                                    param: route('comment.index'),
                                 },
                             ]}
                         />

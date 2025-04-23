@@ -42,10 +42,10 @@ class PostController extends Controller
             // $posts = Post::all();
             $posts = DB::table("posts")->paginate(10);
         } else {
-            $posts = Post::get()->where("user_id", $request->user()->id);
+            $posts = DB::table("posts")->where("user_id", $request->user()->id)->paginate(10);
         }
 
-        // dd($posts);
+        
         
         foreach($posts as $post) {
             $content = json_decode($post->description) ?? $post->description;

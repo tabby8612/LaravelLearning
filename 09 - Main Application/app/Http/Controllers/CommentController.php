@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use Carbon\Carbon;
 use Carbon\Traits\Timestamp;
+use DB;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class CommentController extends Controller
@@ -12,9 +15,35 @@ class CommentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($perPage = 10)
     {
         //
+        $PaginateComments = DB::table("comments")->paginate($perPage);
+
+        $comments = [];
+
+        foreach($PaginateComments as $comment) {
+           
+            
+            $comments[] = [               
+
+                "id" => $comment->id,
+                "name" => $comment->name,
+                "comment" => json_decode($comment->comment)[0] ?? $comment->comment,
+                "postId" => $comment->post_id,
+                "created_at" => Carbon::parse($comment->created_at)->toFormattedDateString() ?? "25/02/2025",
+            ];
+        }
+
+        
+        $totalPages = $PaginateComments->total() / $PaginateComments->perPage();
+
+        
+
+        return Inertia::render("admin/comments/comments", [
+            "comments" => $comments,
+            "totalPages" => $totalPages
+        ]);
     }
 
     /**
@@ -64,6 +93,34 @@ class CommentController extends Controller
     public function edit(Comment $comment)
     {
         //
+
+        // dd($comment);
+        $content = json_decode($comment->comment) ?? $comment->comment;
+
+        if(is_array($content)) {
+            $content = implode($content);
+        }
+
+    //     id: string;
+    // name: string;
+    // comment: string;
+    // post_id: string;
+        
+        $commentObj = [
+            "id" => $comment->id,
+            "name" => $comment->name,
+            "comment" => $content,
+            "postId" => $comment->post_id,
+            "postTitle" => $comment->post->title
+        ];
+        
+        //-- Upon passing the ID, Larvel provide comment object
+        return Inertia::render("admin/comments/edit", [
+            "comment" => $commentObj,            
+
+        ]);
+
+
     }
 
     /**
@@ -72,6 +129,14 @@ class CommentController extends Controller
     public function update(Request $request, Comment $comment)
     {
         //
+        
+
+
+        $comment->name = $request->authorName;
+        $comment->comment = $request->contentArr;
+        $comment->save();
+
+        return redirect()->route("comment.index");
     }
 
     /**
