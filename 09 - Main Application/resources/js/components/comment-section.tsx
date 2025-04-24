@@ -10,46 +10,58 @@ type Comment = {
     comment: string;
 };
 
+type User = {
+    name: string;
+};
+
 type PageProps = {
     post: {
         id: string;
     };
     comments: Comment[];
     message: string;
+    auth: {
+        user: User;
+    };
 };
 
 export default function CommentSection() {
-    const { post, errors, comments, message } = usePage<PageProps>().props;
+    const { post, errors, comments, message, auth } = usePage<PageProps>().props;
+    console.log(message);
     const [showMessage, setShowMessage] = useState<boolean>(false);
+    console.log(showMessage);
     const [ReplyBoxInd, setReplayBoxInd] = useState<string | null>(null);
+    const [commentContent, setCommentContent] = useState<string>('');
+    const [replyContent, setReplyContent] = useState<string>('');
 
     useEffect(() => {
         if (message) {
-            setShowMessage(true);
             const timer = setTimeout(() => setShowMessage(false), 3000);
             return () => clearTimeout(timer);
         }
-    }, [message]);
+    }, [message, showMessage]);
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-
-        const comment = document.querySelector('.tiptap')?.childNodes as ArrayLike<ChildNode>;
-        const commentArr: string[] = Array.from(comment, (el) => (el as Element).outerHTML);
+        const commentBox = document.querySelector('.tiptap') as HTMLDivElement;
 
         router.post(
             route('comment.store'),
             {
-                comment: JSON.stringify(commentArr),
+                comment: commentContent,
                 postId: post.id,
             },
             {
                 onSuccess: () => {
-                    Array.from(comment).forEach((el) => ((el as Element).outerHTML = ''));
+                    Array.from(commentBox.childNodes).forEach((el) => ((el as Element).outerHTML = ''));
+                    setCommentContent('');
                 },
                 async: true,
             },
         );
+
+        Array.from(commentBox.childNodes).forEach((el) => ((el as Element).outerHTML = ''));
+        setShowMessage(true);
     }
 
     function renderReplyForm(id: string) {
@@ -61,6 +73,12 @@ export default function CommentSection() {
         }
     }
 
+    function replyHandler(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        console.log(replyContent);
+    }
+
     return (
         <section className="mx-auto w-4xl bg-white py-8 antialiased lg:py-16 dark:bg-gray-900">
             <div className="mx-auto max-w-2xl px-4">
@@ -70,14 +88,18 @@ export default function CommentSection() {
                 {errors && <p className="mb-2.5 text-[13px] text-red-500">{errors.comment}</p>}
                 {showMessage && <p className="mb-2.5 text-[13px] text-green-700">{message}</p>}
                 <form className="mb-6" onSubmit={handleSubmit}>
-                    <TipTap content={'Share your thoughts'} />
+                    <TipTap content={commentContent} setContent={setCommentContent} />
 
-                    <button
-                        type="submit"
-                        className="bg-primary-dark focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800 inline-flex items-center rounded-lg px-4 py-2.5 text-center text-xs font-medium text-white focus:ring-4"
-                    >
-                        Post comment
-                    </button>
+                    {auth.user?.name ? (
+                        <button
+                            type="submit"
+                            className="bg-primary-dark focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800 inline-flex items-center rounded-lg px-4 py-2.5 text-center text-xs font-medium text-white focus:ring-4"
+                        >
+                            Post comment
+                        </button>
+                    ) : (
+                        <p className="text-red-600">You need to logged in to comment</p>
+                    )}
                 </form>
                 {comments.map((comment, index) => (
                     <article className="rounded-lg bg-white p-6 text-base dark:bg-gray-900" key={index}>
@@ -120,8 +142,8 @@ export default function CommentSection() {
                         </div>
                         {ReplyBoxInd === comment.id && (
                             <div id="replyBox" className="animate-fade-in-scale ml-15">
-                                <form>
-                                    <TipTap content="Enter" />
+                                <form onSubmit={replyHandler}>
+                                    <TipTap content={replyContent} setContent={setReplyContent} />
                                     <button
                                         type="submit"
                                         className="bg-primary-dark focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800 inline-flex items-center rounded-lg px-4 py-2.5 text-center text-xs font-medium text-white focus:ring-4"

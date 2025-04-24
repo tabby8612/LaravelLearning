@@ -155,14 +155,17 @@ class HomeController extends Controller {
 
         $comments = [];        
         foreach($post->comments as $comment) {
-            
-            $commObj = [
-                "id" => $comment->id,
-                "name" => $comment->name,
-                "comment" => json_decode($comment->comment) ?? $comment->comment 
-            ];
 
-            $comments[] = $commObj;
+            if ($comment->status === "approved") {
+                $commObj = [
+                    "id" => $comment->id,
+                    "name" => $comment->name,
+                    "comment" => json_decode($comment->comment) ?? $comment->comment 
+                ];
+
+                $comments[] = $commObj;
+            }          
+
         }
         
         $message = $request->session()->pull("message");

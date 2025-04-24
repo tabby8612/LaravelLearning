@@ -46,6 +46,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post("post/{id}/tag/detach", [PostController::class, "removeTag"])->name("tag.detach");
     
     Route::post("post/{id}/tag/attach", [PostController::class, "attachTag"])->name("tag.attach");
+
+    Route::post("comment/{id}/approve", [CommentController::class, "approve"])->name("comment.approve");
+
+    Route::post("comment/{id}/disapprove", [CommentController::class, "disapprove"])->name("comment.disapprove");
 });
 
 

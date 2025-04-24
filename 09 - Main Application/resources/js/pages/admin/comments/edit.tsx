@@ -5,7 +5,7 @@ import TipTap from '@/components/tip-tap';
 import DashboardLayout from '@/layouts/dashboard-layout';
 import { router, usePage } from '@inertiajs/react';
 import { MoveLeft } from 'lucide-react';
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 
 type Comment = {
     id: string;
@@ -21,20 +21,22 @@ type PageProps = {
 
 export default function Edit() {
     const { comment } = usePage<PageProps>().props;
-    console.log(comment);
+    const [commentContent, setCommentContent] = useState<string>(comment.comment);
 
     function submitHandler(e: FormEvent<HTMLInputElement>) {
         e.preventDefault();
 
         const authorName = document.getElementById('author') as HTMLInputElement;
 
-        const content = document.querySelector('.tiptap')?.childNodes as ArrayLike<ChildNode>;
-        const contentArr: string[] = Array.from(content, (el) => (el as Element).outerHTML);
-
         router.patch(route('comment.update', comment.id), {
             authorName: authorName.value,
-            contentArr: JSON.stringify(contentArr),
+            contentArr: commentContent,
         });
+    }
+
+    function deleteHandler(e: FormEvent<HTMLInputElement>) {
+        e.preventDefault();
+        router.delete(route('comment.destroy', comment.id));
     }
 
     return (
@@ -55,7 +57,7 @@ export default function Edit() {
 
                     <Label labelName="Comment" />
                     <div className="text-white">
-                        <TipTap content={comment.comment} />
+                        <TipTap content={commentContent} setContent={setCommentContent} />
                     </div>
 
                     <div className="flex w-3xl justify-between">
@@ -65,7 +67,10 @@ export default function Edit() {
                                 Back To All Comments
                             </a>
                         </div>
-                        <Button text="Edit Comment" clickFn={submitHandler} />
+                        <div className="flex gap-3">
+                            <Button text="Delete Comment" clickFn={deleteHandler} />
+                            <Button text="Edit Comment" clickFn={submitHandler} />
+                        </div>
                     </div>
                 </form>
             </div>

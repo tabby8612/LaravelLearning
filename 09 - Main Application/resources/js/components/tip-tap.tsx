@@ -8,7 +8,14 @@ import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
 import { EditorContent, useEditor } from '@tiptap/react';
 
-export default ({ content = '' }) => {
+type ContentFn = (s: string) => void;
+
+type Props = {
+    content: string;
+    setContent: ContentFn;
+};
+
+export default ({ content = '', setContent }: Props) => {
     const editor = useEditor({
         extensions: [
             Document,
@@ -21,6 +28,9 @@ export default ({ content = '' }) => {
             }),
         ],
         content: content,
+        onUpdate({ editor }) {
+            setContent(editor.getHTML());
+        },
     });
 
     if (!editor) {

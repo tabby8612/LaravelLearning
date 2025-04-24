@@ -23,7 +23,7 @@ class CommentController extends Controller
         $comments = [];
 
         foreach($PaginateComments as $comment) {
-           
+
             
             $comments[] = [               
 
@@ -31,6 +31,7 @@ class CommentController extends Controller
                 "name" => $comment->name,
                 "comment" => json_decode($comment->comment)[0] ?? $comment->comment,
                 "postId" => $comment->post_id,
+                "status" => $comment->status,
                 "created_at" => Carbon::parse($comment->created_at)->toFormattedDateString() ?? "25/02/2025",
             ];
         }
@@ -42,7 +43,8 @@ class CommentController extends Controller
 
         return Inertia::render("admin/comments/comments", [
             "comments" => $comments,
-            "totalPages" => $totalPages
+            "totalPages" => $totalPages,
+            "message" => session()->get("message")
         ]);
     }
 
@@ -72,7 +74,7 @@ class CommentController extends Controller
         $comment->created_at = now();
         $comment->save();
 
-        session(["message" => "Comment Posted"]);
+        session(["message" => "Your Comment Is Submitted For Moderation"]);
 
         // return redirect()->action([HomeController::class, "post"], $request->postId);
         
@@ -145,5 +147,21 @@ class CommentController extends Controller
     public function destroy(Comment $comment)
     {
         //
+        $comment->delete();
+        return redirect()->route("comment.index")->with("message", "Comment with ID {$comment->id} deleted");
     }
+
+    public function approve($commentId) {
+        $comment = Comment::findOrFail($commentId);
+        $comment->status = "approved";
+        $comment->save();
+        
+    }
+
+    public function disapprove($commentId) {
+        $comment = Comment::findOrFail($commentId);
+        $comment->status = "moderation";
+        $comment->save();
+    }
+
 }
