@@ -1,6 +1,7 @@
 import { router, usePage } from '@inertiajs/react';
+import { Editor } from '@tiptap/core';
 import { Speech } from 'lucide-react';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Icon } from './icon';
 import TipTap from './tip-tap';
 
@@ -8,10 +9,19 @@ type Comment = {
     id: string;
     name: string;
     comment: string;
+    replies: Reply[] | [];
 };
 
 type User = {
     name: string;
+};
+
+type Reply = {
+    id: string;
+    name: string;
+    reply_text: string;
+    comment_id: number;
+    created_at: string;
 };
 
 type PageProps = {
@@ -23,27 +33,33 @@ type PageProps = {
     auth: {
         user: User;
     };
+    replyMessage: string;
 };
 
 export default function CommentSection() {
-    const { post, errors, comments, message, auth } = usePage<PageProps>().props;
-    console.log(message);
+    const { post, errors, comments, message, auth, replyMessage } = usePage<PageProps>().props;
     const [showMessage, setShowMessage] = useState<boolean>(false);
-    console.log(showMessage);
     const [ReplyBoxInd, setReplayBoxInd] = useState<string | null>(null);
     const [commentContent, setCommentContent] = useState<string>('');
     const [replyContent, setReplyContent] = useState<string>('');
+    const [replySuccessMessage, setReplySuccessMessage] = useState<boolean>(false);
+    const commentBoxRef = useRef<Editor | null>(null);
+    const replyBoxRef = useRef<Editor | null>(null);
 
     useEffect(() => {
         if (message) {
             const timer = setTimeout(() => setShowMessage(false), 3000);
             return () => clearTimeout(timer);
         }
-    }, [message, showMessage]);
+
+        if (replyMessage) {
+            const timer = setTimeout(() => setReplySuccessMessage(false), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [message, showMessage, replyMessage, replySuccessMessage]);
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        const commentBox = document.querySelector('.tiptap') as HTMLDivElement;
 
         router.post(
             route('comment.store'),
@@ -53,19 +69,22 @@ export default function CommentSection() {
             },
             {
                 onSuccess: () => {
-                    Array.from(commentBox.childNodes).forEach((el) => ((el as Element).outerHTML = ''));
+                    if (commentBoxRef.current) {
+                        commentBoxRef.current.commands.clearContent();
+                    }
+
                     setCommentContent('');
+                    setShowMessage(true);
                 },
                 async: true,
+                preserveScroll: true,
+                preserveState: true,
             },
         );
-
-        Array.from(commentBox.childNodes).forEach((el) => ((el as Element).outerHTML = ''));
-        setShowMessage(true);
     }
 
+    //-- handles rendering reply form
     function renderReplyForm(id: string) {
-        console.log(id);
         if (ReplyBoxInd === id) {
             setReplayBoxInd(null);
         } else {
@@ -73,10 +92,27 @@ export default function CommentSection() {
         }
     }
 
-    function replyHandler(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
+    //-- Handles reply submission
+    function replyHandler(id: string) {
+        router.post(
+            route('reply.store'),
+            {
+                replyContent,
+                comment_id: id,
+            },
+            {
+                onSuccess: () => {
+                    if (replyBoxRef.current) {
+                        replyBoxRef.current.commands.clearContent();
+                    }
 
-        console.log(replyContent);
+                    setReplyContent('');
+                    setReplySuccessMessage(true);
+                },
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
     }
 
     return (
@@ -88,7 +124,7 @@ export default function CommentSection() {
                 {errors && <p className="mb-2.5 text-[13px] text-red-500">{errors.comment}</p>}
                 {showMessage && <p className="mb-2.5 text-[13px] text-green-700">{message}</p>}
                 <form className="mb-6" onSubmit={handleSubmit}>
-                    <TipTap content={commentContent} setContent={setCommentContent} />
+                    <TipTap content={commentContent} setContent={setCommentContent} editorRef={(editor) => (commentBoxRef.current = editor)} />
 
                     {auth.user?.name ? (
                         <button
@@ -142,8 +178,19 @@ export default function CommentSection() {
                         </div>
                         {ReplyBoxInd === comment.id && (
                             <div id="replyBox" className="animate-fade-in-scale ml-15">
-                                <form onSubmit={replyHandler}>
-                                    <TipTap content={replyContent} setContent={setReplyContent} />
+                                {replySuccessMessage && <p className="mb-2.5 text-[13px] text-green-700">{replyMessage}</p>}
+                                {errors && <p className="mb-2.5 text-[13px] text-red-500">{errors.replyContent}</p>}
+                                <form
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        replyHandler(comment.id);
+                                    }}
+                                >
+                                    <TipTap
+                                        content={replyContent}
+                                        setContent={setReplyContent}
+                                        editorRef={(editor) => (replyBoxRef.current = editor)}
+                                    />
                                     <button
                                         type="submit"
                                         className="bg-primary-dark focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800 inline-flex items-center rounded-lg px-4 py-2.5 text-center text-xs font-medium text-white focus:ring-4"
@@ -153,6 +200,30 @@ export default function CommentSection() {
                                 </form>
                             </div>
                         )}
+
+                        {comment.replies &&
+                            comment.replies.map((reply) => (
+                                <div
+                                    className="mt-3 ml-11 rounded-[10px] bg-slate-200 px-5 py-1 inset-shadow-sm inset-shadow-slate-100"
+                                    key={reply.id}
+                                >
+                                    <footer className="mt-2 mb-2 flex items-center justify-between">
+                                        <div className="flex items-center">
+                                            <p className="mr-3 inline-flex items-center text-sm font-semibold text-gray-900 dark:text-white">
+                                                <Icon iconNode={Speech} className="mr-3.5" />
+                                                {reply.name}
+                                            </p>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                <time dateTime="2022-02-08" title={reply.created_at}>
+                                                    {reply.created_at}
+                                                </time>
+                                            </p>
+                                        </div>
+                                    </footer>
+
+                                    <div className="text-gray-500 dark:text-gray-400" dangerouslySetInnerHTML={{ __html: reply.reply_text }}></div>
+                                </div>
+                            ))}
                     </article>
                 ))}
             </div>

@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use App\Models\Comment;
+use App\Models\Role;
 use DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -23,12 +25,16 @@ class PostController extends Controller
         $users = User::all()->count();
         $tags = Tag::all()->count();
         $categories = Category::all()->count();
+        $comments = Comment::all()->count();
+        $roles = Role::all()->count();
 
         return Inertia::render("admin/dashboard", [
             "postsCount" => $posts,
             "usersCount" => $users,
             "tagsCount" => $tags,
-            "categoriesCount" => $categories
+            "categoriesCount" => $categories,
+            "commentsCount" => $comments,
+            "rolesCount" => $roles,
         ]);
         
     }
@@ -43,9 +49,7 @@ class PostController extends Controller
             $posts = DB::table("posts")->paginate(10);
         } else {
             $posts = DB::table("posts")->where("user_id", $request->user()->id)->paginate(10);
-        }
-
-        
+        }        
         
         foreach($posts as $post) {
             $content = json_decode($post->description) ?? $post->description;

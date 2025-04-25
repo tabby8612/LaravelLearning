@@ -153,30 +153,50 @@ class HomeController extends Controller {
 
         $data = $this->getData();  
 
-        $comments = [];        
+        $comments = [];  
+        $replies = [];
+
         foreach($post->comments as $comment) {
 
             if ($comment->status === "approved") {
+                $replies = [];
+
+                if ($comment->replies) {
+                    foreach($comment->replies as $reply) {
+                        $replies[] = [
+                            "name" => $reply->name,
+                            "id" => $reply->id,
+                            "reply_text" => $reply->reply_text,
+                            "comment_id" => $reply->comment_id,
+                            "created_at" => $reply->created_at->isoFormat("dddd D YYYY"),
+                        ];
+                }
                 $commObj = [
                     "id" => $comment->id,
                     "name" => $comment->name,
-                    "comment" => json_decode($comment->comment) ?? $comment->comment 
+                    "comment" => json_decode($comment->comment) ?? $comment->comment,
+                    "replies" => $replies
                 ];
 
                 $comments[] = $commObj;
             }          
 
-        }
+            }
+        }   
         
         $message = $request->session()->pull("message");
+        $replyMessage = $request->session()->pull("replySuccessMessage");
 
+        
 
         return Inertia::render("SinglePost", [
             "post" => $postContent,
             "data" => $data,
             "isLoggedIn" => $this->isLoggedIn(),
             "comments" => $comments,
-            "message" => $message
+            "message" => $message,
+            "replyMessage" => $replyMessage,
+            
         ]);
     }
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
@@ -28,6 +29,7 @@ Route::resource("comment", CommentController::class);
 Route::middleware(['auth', 'verified'])->group(function () {    
     
     Route::resource("admin", PostController::class);
+    Route::resource("comments/reply", ReplyController::class);
 
     Route::get('admin', [PostController::class, "index"])->name('admin')->can("isAdmin", Post::class);
 

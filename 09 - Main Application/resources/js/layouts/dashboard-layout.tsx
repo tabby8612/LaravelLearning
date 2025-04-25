@@ -161,6 +161,10 @@ export default function DashboardLayout({ title, identifier, children }: Props) 
                                     name: 'All Comments',
                                     param: route('comment.index'),
                                 },
+                                {
+                                    name: 'All Replies',
+                                    param: route('reply.index'),
+                                },
                             ]}
                         />
                     </div>

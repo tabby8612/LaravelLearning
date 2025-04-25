@@ -18,6 +18,7 @@ type PageProps = {
 export default function Create() {
     const { categories } = usePage<PageProps>().props;
     const [postTags, setpostTags] = useState<string[]>([]);
+    const [postDescription, setPostDescription] = useState<string>('');
 
     //-- Handle Submit Form
     function submitHandler(e: FormEvent<HTMLInputElement>) {
@@ -27,13 +28,9 @@ export default function Create() {
         const image = document.getElementById('image') as HTMLInputElement;
         const category = document.getElementById('categories1') as HTMLSelectElement;
 
-        //-- Getting Content From RichText
-        const content = document.querySelector('.tiptap')?.childNodes as ArrayLike<ChildNode>;
-        const contentArr: string[] = Array.from(content, (el) => (el as Element).outerHTML);
-
         return router.post(route('admin.store'), {
             title: title.value,
-            description: JSON.stringify(contentArr), //-- will send content as a string to check and store in DB
+            description: postDescription, //-- will send content as a string to check and store in DB
             image: image.files![0], //-- image.files[0] will contain object that inertia convert into FileType object for Laravel
             category: category.value,
             tags: postTags,
@@ -74,7 +71,7 @@ export default function Create() {
                     </div>
                     <Label labelName="Description" />
                     <div className="text-white">
-                        <Tiptap content="Write Something Meaningful" />
+                        <Tiptap content={postDescription} setContent={setPostDescription} />
                     </div>
                     <Label labelName="Category" />
                     <select name="categories" id="categories1" className="mb-6 rounded-lg bg-slate-300 py-2 pr-5 pl-4" defaultValue="Select Category">

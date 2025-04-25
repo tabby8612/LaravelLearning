@@ -6,16 +6,24 @@ import Heading from '@tiptap/extension-heading';
 import Italic from '@tiptap/extension-italic';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { Editor, EditorContent, useEditor } from '@tiptap/react';
+import { useEffect } from 'react';
 
 type ContentFn = (s: string) => void;
 
 type Props = {
     content: string;
     setContent: ContentFn;
+    editorRef?: (editor: Editor) => void;
 };
 
-export default ({ content = '', setContent }: Props) => {
+export default ({ content = '', setContent, editorRef }: Props) => {
+    useEffect(() => {
+        if (editor && editorRef) {
+            editorRef(editor);
+        }
+    });
+
     const editor = useEditor({
         extensions: [
             Document,

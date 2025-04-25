@@ -5,7 +5,7 @@ import TipTap from '@/components/tip-tap';
 import DashboardLayout from '@/layouts/dashboard-layout';
 import { router, usePage } from '@inertiajs/react';
 import { MoveLeft, X } from 'lucide-react';
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 
 type Category = {
     id: string;
@@ -35,6 +35,7 @@ type Props = {
 
 export default function Edit({ data }: Props) {
     const { categories } = usePage<PageProps>().props;
+    const [postDescription, setPostDescription] = useState<string>(data.description);
 
     function submitHandler(e: FormEvent<HTMLInputElement>) {
         e.preventDefault();
@@ -43,13 +44,9 @@ export default function Edit({ data }: Props) {
         const image = document.getElementById('image') as HTMLInputElement;
         const category = document.getElementById('categories1') as HTMLSelectElement;
 
-        //-- Getting Content From RichText
-        const content = document.querySelector('.tiptap')?.childNodes as ArrayLike<ChildNode>;
-        const contentArr: string[] = Array.from(content, (el) => (el as Element).outerHTML);
-
         return router.patch(route('admin.update', data.id), {
             title: title.value,
-            description: JSON.stringify(contentArr), //-- will send content as a string to check and store in DB
+            description: postDescription,
             image: image.files![0], //-- image.files[0] will contain object that inertia convert into FileType object for Laravel
             category: category.value,
         });
@@ -65,7 +62,7 @@ export default function Edit({ data }: Props) {
         <DashboardLayout title="Edit Post" identifier="posts">
             <div className="mx-12 my-12 w-3xl p-5">
                 <h1 className="text-primary-text font-poppins mb-3.5 text-5xl font-medium">Edit Post</h1>
-                <form encType="multipart/form-data" className="w-3xl">
+                <form encType="multipart/form-data" className="w-3xl text-white">
                     <Label labelName="Title" />
                     <Input name="title" id="title" value={data.title} />
                     <Label labelName="Image" />
@@ -80,12 +77,12 @@ export default function Edit({ data }: Props) {
                         <p className="my-2 text-xs text-slate-50">PNG, JPG SVG, WEBP, and GIF are Allowed.</p>
                     </div>
                     <Label labelName="Description" />
-                    <TipTap content={data.description} />
+                    <TipTap content={postDescription} setContent={setPostDescription} />
                     <Label labelName="Category" />
                     <select
                         name="categories"
                         id="categories1"
-                        className="mb-6 rounded-lg bg-slate-300 py-2 pr-5 pl-4"
+                        className="text-primary-dark mb-6 rounded-lg bg-slate-300 py-2 pr-5 pl-4"
                         defaultValue={data.category_id}
                     >
                         <option value="">Select Category</option>
