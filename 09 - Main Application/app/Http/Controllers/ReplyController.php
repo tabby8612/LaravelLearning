@@ -19,12 +19,13 @@ class ReplyController extends Controller
         $replies = Reply::all();
 
 
-        // foreach($replies as $reply) {
-        //     dd($reply);
-        // }
+        $replySuccessMessage = session()->pull("replySuccessMessage");
+        $replyDeleteMessage = session()->pull("deleteSuccessMessage");
 
         return Inertia::render("admin/replies/AllReplies", [
-            "replies" => $replies
+            "replies" => $replies,
+            "replySuccessMessage" => $replySuccessMessage,
+            "replyDeleteMessage" => $replyDeleteMessage
         ]);
     }
 
@@ -93,7 +94,7 @@ class ReplyController extends Controller
         $reply->reply_text = $request->reply;
         $reply->save();
 
-        return redirect(route("reply.index"));
+        return redirect(route("reply.index"))->with("replySuccessMessage", "Reply has being updated");
     }
 
     /**
@@ -102,5 +103,8 @@ class ReplyController extends Controller
     public function destroy(Reply $reply)
     {
         //
+        $reply->delete();
+
+        return redirect(route("reply.index"))->with("deleteSuccessMessage", "Reply has be deleted");
     }
 }
