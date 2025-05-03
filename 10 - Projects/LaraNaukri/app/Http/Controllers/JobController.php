@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Job;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use function Termwind\render;
 
@@ -14,8 +15,17 @@ class JobController extends Controller
     public function index()
     {
         //
+
+        $jobsData = Job::all()->groupBy("featured");   
+        $tags = Tag::all();
         
-        return view("home");
+      
+
+        return view("home", [
+            "recentJobs" => $jobsData[0],
+            "featuredJobs" => $jobsData[1]->take(3),
+            "tags" => $tags
+        ]);
     }
 
     /**
